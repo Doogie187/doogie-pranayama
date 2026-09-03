@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Doogie">
+<meta name="theme-color" content="#7560a8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Doogie – Pranayama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7456a7;--purple2:#a48acb;--deep:#3e2d5e;--white:#fff;--glass:rgba(255,255,255,.84);--line:rgba(255,255,255,.55);--muted:#8d7ca8;--danger:#9b4d63;--bg:#eeeaf3}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:#000;color:var(--deep);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",sans-serif;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}.app{position:relative;max-width:500px;min-height:100dvh;margin:auto;overflow:hidden;background:var(--bg)}
+.bg{position:fixed;inset:0;max-width:500px;margin:auto;background:url('background.jpg') center/cover no-repeat;filter:grayscale(1) contrast(1.03);transform:scale(1.02);z-index:0}
+.bg:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(43,30,58,.30),rgba(117,86,167,.13) 36%,rgba(245,242,249,.92) 86%,#eeeaf3 100%)}
+.content{position:relative;z-index:1;min-height:100dvh;padding:calc(env(safe-area-inset-top) + 24px) 24px calc(env(safe-area-inset-bottom) + 105px)}
+.screen{display:none;min-height:calc(100dvh - 24px);flex-direction:column}.on{display:flex;animation:fade .28s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.serif{font-family:Fraunces,serif}h1{margin:0;font-size:58px;line-height:.94;font-weight:300;letter-spacing:-2px;color:#fff}h1 i{font-style:normal}h2{margin:0;font-size:32px;letter-spacing:-.8px;font-weight:600}.sub{color:rgba(255,255,255,.86);font-size:16px;line-height:1.4}.eyebrow{margin:0 0 8px;text-transform:none;color:#c7b0e3;font-size:18px;font-weight:500}.topline{display:flex;align-items:center;justify-content:space-between}.gear{width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.55);background:rgba(216,195,239,.72);color:var(--deep);font-size:25px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.heroCopy{margin-top:8px}.tagline{margin:18px 0 0;color:#fff;font-size:22px;font-weight:400}.sp{flex:1}
+.startWrap{display:flex;justify-content:center;margin:52px 0 44px}.startBtn{width:300px;height:300px;border-radius:50%;border:1px solid rgba(255,255,255,.78);background:radial-gradient(circle at 35% 25%,rgba(205,181,231,.72),rgba(132,99,177,.72) 64%,rgba(100,73,143,.72));box-shadow:0 20px 55px rgba(58,36,88,.35),inset 0 0 28px rgba(255,255,255,.18);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.lotus{font-size:58px;line-height:1;margin-bottom:12px}.startBtn strong{font-size:21px}.startBtn span{margin-top:6px;font-size:17px;color:#eadff4}
+.sectionTitle{display:flex;align-items:center;justify-content:space-between;margin:0 4px 12px;color:#c8afe4;text-transform:uppercase;letter-spacing:2px;font-size:14px;font-weight:700}.edit{border:0;background:none;color:#c8afe4;font-size:17px;font-weight:500}
+.savedList{display:flex;flex-direction:column;gap:9px}.routine{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid rgba(255,255,255,.66);border-radius:22px;padding:14px 13px;box-shadow:0 8px 25px rgba(63,40,90,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.icon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:rgba(199,178,225,.38);color:var(--purple);font-size:27px}.routineInfo{flex:1;min-width:0}.routineInfo b{display:block;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.routineInfo span{display:block;margin-top:4px;color:#9a8aad;font-size:14px}.dots,.trash,.star{border:0;background:none;color:var(--purple);font-size:25px;width:42px;height:42px;border-radius:50%}.trash{font-size:22px;background:rgba(218,204,231,.32)}.empty{margin:0;padding:14px;color:#a090b1;font-size:15px;background:rgba(255,255,255,.66);border-radius:18px}
+.bottom{position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 12px);width:min(452px,calc(100% - 36px));height:78px;border:1px solid rgba(255,255,255,.75);border-radius:27px;background:rgba(255,255,255,.70);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(4,1fr);box-shadow:0 10px 30px rgba(48,29,73,.12)}.nav{border:0;background:none;color:#8b7b9d;font-size:12px;font-weight:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.nav b{font-size:25px;font-weight:400;line-height:1}.nav.active{color:var(--purple);font-weight:700}.nav.active b{font-weight:700}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:22px}.back{border:0;background:rgba(255,255,255,.65);width:42px;height:42px;border-radius:50%;color:var(--deep);font-size:25px}.panel{background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.72);border-radius:24px;padding:16px;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);box-shadow:0 10px 30px rgba(56,35,80,.08)}.exercise{display:flex;align-items:center;gap:12px;margin-bottom:10px}.exercise:last-child{margin-bottom:0}.exercise .routineInfo b{color:var(--deep)}.saveBtn{border:0;background:rgba(204,187,223,.35);color:var(--purple);width:44px;height:44px;border-radius:50%;font-size:22px}.saveBtn.saved{background:var(--purple);color:#fff}.field{width:100%;border:1px solid rgba(112,83,153,.20);border-radius:16px;background:rgba(255,255,255,.78);padding:14px 15px;font-size:16px;color:var(--deep);margin:7px 0}.row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.65);border-radius:16px;padding:9px 10px;margin:8px 0}.row label{flex:1;font-weight:600}.step{border:0;width:36px;height:36px;border-radius:50%;background:#eee7f4;color:var(--purple);font-size:21px}.value{width:54px;text-align:center;font-weight:650}.primary{width:100%;border:0;border-radius:17px;background:linear-gradient(180deg,#9c83c2,#7456a7);color:#fff;padding:15px;font-size:17px;font-weight:650;box-shadow:0 10px 25px rgba(91,62,130,.25)}
+.session{text-align:center}.session .topline{margin-bottom:20px}.sessionBg{position:absolute;inset:0;background:rgba(238,234,243,.25);z-index:-1}.phase{margin-top:28px;color:var(--purple);font-size:13px;letter-spacing:3px;text-transform:uppercase;font-weight:750}.count{font:300 70px/1 Fraunces,serif;margin:12px 0 25px;color:var(--deep)}.orbBox{height:310px;display:grid;place-items:center}.orb{height:150px;width:150px;border-radius:50%;background:radial-gradient(circle at 35% 25%,#e5d7f2,#a58ac8 54%,#7456a7);border:1px solid rgba(255,255,255,.8);box-shadow:0 20px 48px rgba(82,52,112,.30),inset 0 0 25px rgba(255,255,255,.25);transition:all 1.05s cubic-bezier(.45,0,.55,1)}.big{height:270px;width:270px}.pause{border:0;background:none;color:var(--purple);font-size:16px;padding:16px}.done{text-align:center;justify-content:center}.check{font-size:58px;color:var(--purple)}.done .sub{color:#8d7ca0}.metrics{display:flex;gap:10px;margin:28px 0}.metrics div{flex:1;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.7);border-radius:18px;padding:13px 5px}.metrics b{display:block;font-size:17px}.metrics span{color:#998ba7;font-size:12px}
+.modal{display:none;position:fixed;inset:0;z-index:20;background:rgba(44,28,62,.34);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:flex-end}.modal.on{display:flex}.sheet{width:100%;background:#f2eef5;border-radius:27px 27px 0 0;padding:16px 24px calc(env(safe-area-inset-bottom) + 24px);text-align:center}.handle{width:38px;height:5px;border-radius:5px;background:#d0c5d8;margin:0 auto 18px}.end{width:100%;border:0;border-radius:16px;background:#f1dfe5;color:var(--danger);padding:15px;font-size:16px;font-weight:650}.cancel{border:0;background:none;padding:14px;color:var(--purple);font-size:16px;font-weight:600}
+.toast{position:fixed;z-index:30;left:50%;bottom:108px;transform:translate(-50%,15px);opacity:0;background:rgba(54,39,73,.92);color:#fff;border-radius:16px;padding:11px 16px;font-size:14px;pointer-events:none;transition:.25s}.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:380px){h1{font-size:49px}.startBtn{width:260px;height:260px}.startWrap{margin:40px 0 34px}.content{padding-left:18px;padding-right:18px}}
+</style>
+</head>
+<body>
+<div class="app"><div class="bg"></div><main class="content">
+<section id="home" class="screen on">
+  <div class="topline"><div><p class="eyebrow" id="greeting">Guten Morgen</p><div class="heroCopy"><h1 class="serif">Doogie</h1><p class="tagline">Vertrauen ist der Anfang von Allem.</p></div></div><button class="gear" onclick="show('profile')" aria-label="Einstellungen">⚙︎</button></div>
+  <div class="startWrap"><button class="startBtn" onclick="start(P[0])"><div class="lotus">♧</div><strong>Training starten</strong><span>Pranayama</span></button></div>
+  <div class="sectionTitle"><span>Gespeicherte Atemzeiten</span><button class="edit" onclick="show('custom')">Bearbeiten</button></div>
+  <div id="savedHome" class="savedList"></div>
+  <div class="sp"></div>
+</section>
+
+<section id="exercises" class="screen">
+  <div class="header"><button class="back" onclick="show('home')">‹</button><h2 class="serif">Übungen</h2></div>
+  <div class="panel"><div id="exerciseList"></div></div>
+  <div class="sp"></div>
+</section>
+
+<section id="custom" class="screen">
+  <div class="header"><button class="back" onclick="show('home')">‹</button><h2 class="serif">Atemzeiten</h2></div>
+  <p class="sub" style="color:#756684">Erstelle deine eigene Atemübung und speichere sie direkt auf diesem iPhone.</p>
+  <div id="fields"></div>
+  <input id="presetName" class="field" placeholder="Name, z. B. Entspannung" maxlength="30">
+  <button class="primary" onclick="savePreset()">Atemübung speichern</button>
+  <div class="sectionTitle" style="color:#8069a0;margin-top:26px"><span>Gespeichert</span></div>
+  <div id="presetList" class="savedList"></div>
+  <div class="sp"></div>
+  <button class="primary" onclick="start(custom())">Training starten</button>
+</section>
+
+<section id="profile" class="screen">
+  <div class="header"><button class="back" onclick="show('home')">‹</button><h2 class="serif">Profil</h2></div>
+  <div class="panel">
+    <div class="sectionTitle" style="color:#8069a0"><span>Audio</span></div>
+    <div class="row"><label>Musik weiterlaufen lassen</label><input id="mixToggle" type="checkbox" checked onchange="setMix(this.checked)" style="width:24px;height:24px;accent-color:#7456a7"></div>
+    <p style="color:#8e7d9f;font-size:14px;line-height:1.45;margin:12px 3px 3px">Die Atemansagen werden so dezent wie möglich wiedergegeben. Spotify kann parallel weiterlaufen. Für garantiertes Audio-Mixing auf iPhone ist die native App-Version mit iOS Audio Session vorgesehen.</p>
+  </div>
+  <div class="panel" style="margin-top:12px"><div class="sectionTitle" style="color:#8069a0"><span>Speicher</span></div><p style="color:#8e7d9f;font-size:14px;margin:0">Deine gespeicherten Atemübungen werden lokal auf diesem Gerät gespeichert.</p></div>
+</section>
+
+<section id="history" class="screen"><div class="header"><button class="back" onclick="show('home')">‹</button><h2 class="serif">Verlauf</h2></div><div class="panel"><p style="color:#8e7d9f;margin:0">Dein Trainingsverlauf wird in der nächsten Version ergänzt.</p></div></section>
+
+<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back" onclick="mod(1)">×</button><span id="r" style="color:#806f91;font-size:12px;letter-spacing:1.5px;font-weight:700"></span></div><div class="sp"></div><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div><div class="sp"></div><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Tippen zum Pausieren</button></section>
+
+<section id="done" class="screen done"><div class="check">✓</div><h1 class="serif" style="font-size:40px;color:#3e2d5e">Gut gemacht.</h1><p class="sub" id="dg"></p><p class="sub" id="dc"></p><div class="metrics"><div><b id="dr"></b><span>Runden</span></div><div><b id="dt"></b><span>Minuten</span></div><div><b id="dn"></b><span>Übung</span></div></div><button class="primary" onclick="show('home')">Fertig</button></section>
+</main>
+<nav class="bottom"><button class="nav active" data-screen="home" onclick="show('home')"><b>⌂</b>Home</button><button class="nav" data-screen="exercises" onclick="show('exercises')"><b>♧</b>Übungen</button><button class="nav" data-screen="history" onclick="show('history')"><b>▥</b>Verlauf</button><button class="nav" data-screen="profile" onclick="show('profile')"><b>♙</b>Profil</button></nav>
+<aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Diese Sitzung beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Sitzung beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
+<script>
+const P=[['Box Breathing','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',4,4,4,4,3],['4–7–8','Ein längeres Ausatmen für innere Ruhe.',4,7,8,0,3],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, belebende Atemübung.',2,0,2,0,3]];
+let v=[4,4,6,2,3],s,t,cachedVoice=null,mix=true;
+const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
+function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='exercises')renderExercises()}
+function greeting(){let h=new Date().getHours();return h<5?'Gute Nacht':h<12?'Guten Morgen':h<18?'Guten Tag':'Guten Abend'}
+$('greeting').textContent=greeting();
+function loadSaved(){try{return JSON.parse(localStorage.getItem('doogie_saved_exercises')||'[]')}catch(e){return[]}}
+function saveSaved(a){localStorage.setItem('doogie_saved_exercises',JSON.stringify(a))}
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function routineHTML(p,i,allowDelete=true){return `<div class="routine"><div class="icon">≋</div><div class="routineInfo" onclick="startSaved(${i})"><b>${escapeHtml(p.name)}</b><span>${p.values[0]}–${p.values[1]}–${p.values[2]}–${p.values[3]} Sek · ${p.values[4]} Runden</span></div><button class="dots" onclick="startSaved(${i})">›</button>${allowDelete?`<button class="trash" onclick="deleteSaved(event,${i})" aria-label="Löschen">♜</button>`:''}</div>`}
+function renderHome(){let list=loadSaved();$('savedHome').innerHTML=list.length?list.map((p,i)=>routineHTML(p,i)).join(''):`<p class="empty">Noch keine gespeicherten Atemübungen. Öffne „Übungen“ oder „Atemzeiten“, um eine zu speichern.</p>`}
+function renderExercises(){let saved=loadSaved();$('exerciseList').innerHTML=P.map((p,i)=>{let yes=saved.some(x=>x.source===p[0]);return `<div class="exercise"><div class="icon">≋</div><div class="routineInfo"><b>${p[0]}</b><span>${p[1]}</span></div><button class="saveBtn ${yes?'saved':''}" onclick="togglePreset(${i})">${yes?'★':'☆'}</button><button class="dots" onclick="start(P[${i}])">›</button></div>`}).join('')+`<div class="exercise"><div class="icon">＋</div><div class="routineInfo"><b>Eigene Atemzeit</b><span>Dein persönliches Atemschema</span></div><button class="dots" onclick="show('custom')">›</button></div>`}
+function togglePreset(i){let p=P[i],a=loadSaved(),idx=a.findIndex(x=>x.source===p[0]);if(idx>=0){a.splice(idx,1);toast('Übung entfernt')}else{a.push({name:p[0],source:p[0],values:[p[2],p[3],p[4],p[5],p[6]]});toast('Übung gespeichert')}saveSaved(a);renderExercises();renderHome()}
+function renderFields(){$('fields').innerHTML=['Einatmen','Halten','Ausatmen','Halten','Runden'].map((n,i)=>`<div class="row"><label>${n}</label><button class="step" onclick="setVal(${i},-1)">−</button><span class="value">${v[i]}${i===4?'':' Sek'}</span><button class="step" onclick="setVal(${i},1)">+</button></div>`).join('')}
+function setVal(i,d){v[i]=Math.max(i===4?1:0,Math.min(i===4?60:20,v[i]+d));renderFields()}
+function custom(){return ['Eigene','Dein Atemrhythmus',...v]}
+function renderPresets(){let list=loadSaved();$('presetList').innerHTML=list.length?list.map((p,i)=>routineHTML(p,i)).join(''):`<p class="empty">Noch keine gespeicherten Atemübungen.</p>`;renderFields()}
+function savePreset(){let name=$('presetName').value.trim();if(!name){$('presetName').focus();toast('Bitte einen Namen eingeben');return}let a=loadSaved();a.push({name,values:[...v]});saveSaved(a);$('presetName').value='';renderPresets();renderHome();toast('Atemübung gespeichert')}
+function startSaved(i){let p=loadSaved()[i];if(p)start([p.name,'Gespeicherte Atemübung',...p.values])}
+function deleteSaved(ev,i){ev.stopPropagation();let a=loadSaved();let name=a[i]?.name||'Atemübung';a.splice(i,1);saveSaved(a);renderHome();renderPresets();renderExercises();toast(name+' gelöscht')}
+function setMix(x){mix=x;localStorage.setItem('doogie_audio_mix',x?'1':'0')}
+mix=localStorage.getItem('doogie_audio_mix')!=='0';$('mixToggle').checked=mix;
+function pickVoice(){if(!('speechSynthesis'in window))return;let voices=speechSynthesis.getVoices();cachedVoice=voices.find(x=>x.lang.startsWith('de'))||null}
+if('speechSynthesis'in window){speechSynthesis.addEventListener('voiceschanged',pickVoice);pickVoice()}
+function speak(text){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang=cachedVoice?cachedVoice.lang:'de-DE';u.rate=text==='Halten'?.68:.58;u.pitch=1.02;u.volume=.35;if(cachedVoice)u.voice=cachedVoice;speechSynthesis.speak(u)}
+function chime(){try{let C=window.AudioContext||window.webkitAudioContext;if(!C)return;let c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.035,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.13);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.14)}catch(e){}}
+function start(p){clearInterval(t);let q=[['INHALE',p[2],1],['HOLD',p[3],1],['EXHALE',p[4],0],['HOLD',p[5],0]].filter(x=>x[1]);s={p,q,i:0,n:q[0][1],round:1,completed:0,e:0,total:p[6]*60,stop:0};show('session');paint();chime();speak(words.INHALE);t=setInterval(tick,1000)}
+function tick(){if(s.stop)return;s.e++;if(s.e>=s.total){finish();return}if(s.n>1)s.n--;else if(s.i<s.q.length-1){s.i++;s.n=s.q[s.i][1];chime();speak(words[s.q[s.i][0]])}else{s.completed++;s.round++;s.i=0;s.n=s.q[0][1];chime();speak(words[s.q[0][0]])}paint()}
+function paint(){let x=s.q[s.i],left=s.total-s.e;$('ph').textContent=x[0]==='INHALE'?'Einatmen':x[0]==='HOLD'?'Halten':'Ausatmen';$('co').textContent=String(s.n).padStart(2,'0');$('r').textContent=`VERBLEIBEND ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;$('orb').className='orb '+(x[2]?'big':'')}
+function pause(){s.stop=!s.stop;$('pa').innerHTML=s.stop?'▶&nbsp; Fortsetzen':'Ⅱ&nbsp; Tippen zum Pausieren';if(!s.stop)chime()}
+function mod(x){$('modal').classList.toggle('on',!!x)}
+function quit(){clearInterval(t);if('speechSynthesis'in window)speechSynthesis.cancel();mod(0);show('home')}
+function finish(){clearInterval(t);speak('Gut gemacht.');$('dg').textContent=greeting();$('dc').textContent=`Du hast ${s.p[0]} abgeschlossen.`;$('dr').textContent=s.completed;$('dt').textContent=`${Math.floor(s.total/60)}:00`;$('dn').textContent=s.p[0];show('done')}
+function toast(text){let e=$('toast');e.textContent=text;e.classList.add('on');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('on'),1800)}
+renderHome();renderPresets();renderExercises();
+</script></div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
+</body></html>
