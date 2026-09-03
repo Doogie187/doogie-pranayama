@@ -1,14 +1,14 @@
 {
   "name": "Doogie – Pranayama",
   "short_name": "Doogie",
-  "description": "Persönliche Pranayama-Atemübungen",
+  "description": "Personal Pranayama breathing exercises",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#eeeaf3",
   "theme_color": "#7560a8",
-  "lang": "de",
+  "lang": "en",
   "icons": [
     {"src":"apple-touch-icon.png","sizes":"180x180","type":"image/png","purpose":"any maskable"}
   ]
