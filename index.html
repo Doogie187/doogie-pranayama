@@ -40,9 +40,9 @@ body{overflow-x:hidden}.app{position:relative;max-width:500px;min-height:100dvh;
 <body>
 <div class="app"><div class="bg"></div><main class="content">
 <section id="home" class="screen on">
-  <div class="topline"><div><p class="eyebrow" id="greeting">Good morning</p><div class="heroCopy"><h1 class="serif">Doogie</h1><p class="tagline">Trust is where everything begins.</p></div></div><button class="gear" onclick="show('profile')" aria-label="Settings">⚙︎</button></div>
-  <div class="startWrap"><button class="startBtn" onclick="startLatest()"><div class="lotus">♧</div><strong>Start training</strong><span>Pranayama</span></button></div>
-  <div class="sectionTitle"><span>Saved breathing exercises</span><button class="edit" onclick="show('profile')">Settings</button></div>
+  <div class="topline"><div><p class="eyebrow" id="greeting">Guten Morgen</p><div class="heroCopy"><h1 class="serif">Doogie</h1><p class="tagline">Vertrauen ist der Anfang von allem.</p></div></div><button class="gear" onclick="show('profile')" aria-label="Settings">⚙︎</button></div>
+  <div class="startWrap"><button class="startBtn" onclick="startLatest()"><div class="lotus">♧</div><strong>Training starten</strong><span>Pranayama</span></button></div>
+  <div class="sectionTitle"><span>Gespeicherte Atemübungen</span><button class="edit" onclick="show('profile')">Einstellungen</button></div>
   <div id="savedHome" class="savedList"></div>
   <div class="sp"></div>
 </section>
@@ -81,18 +81,18 @@ body{overflow-x:hidden}.app{position:relative;max-width:500px;min-height:100dvh;
 
 <section id="history" class="screen"><div class="header"><button class="back" onclick="show('profile')">‹</button><h2 class="serif">History</h2></div><div class="panel"><div class="sectionTitle" style="color:#8069a0"><span>Days opened</span></div><div id="historyList"></div></div></section>
 
-<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back" onclick="mod(1)">×</button><span id="r" style="color:#806f91;font-size:12px;letter-spacing:1.5px;font-weight:700"></span></div><div class="sp"></div><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div><div class="sp"></div><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Tap to pause</button></section>
+<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back" onclick="mod(1)">×</button><span id="r" style="color:#806f91;font-size:12px;letter-spacing:1.5px;font-weight:700"></span></div><div class="sp"></div><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div><div class="sp"></div><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Pause</button></section>
 
-<section id="done" class="screen done"><div class="check">✓</div><h1 class="serif" style="font-size:40px;color:#3e2d5e">Well done, Doogie.</h1><p class="sub" id="dg"></p><p class="sub" id="dc"></p><div class="metrics"><div><b id="dr"></b><span>Duration</span></div><div><b id="dt"></b><span>Minutes</span></div><div><b id="dn"></b><span>Exercise</span></div></div><button class="primary" onclick="show('home')">Done</button></section>
+<section id="done" class="screen done"><div class="check">✓</div><h1 class="serif" style="font-size:40px;color:#3e2d5e">Gut gemacht, Doogie.</h1><p class="sub" id="dg"></p><p class="sub" id="dc"></p><div class="metrics"><div><b id="dr"></b><span>Duration</span></div><div><b id="dt"></b><span>Minutes</span></div><div><b id="dn"></b><span>Exercise</span></div></div><button class="primary" onclick="show('home')">Fertig</button></section>
 </main>
 
-<aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">End this session?</h3><p style="color:#8d7ca0">Your current training progress will be ended.</p><button class="end" onclick="quit()">End session</button><button class="cancel" onclick="mod(0)">Keep breathing</button></div></aside><div id="toast" class="toast"></div>
+<aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Training beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Training beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
 <script>
 const P=[['Box Breathing','A steady four-phase rhythm for focus.',4,4,4,4,3],['4–7–8','Ein längeres Exhale für innere Ruhe.',4,7,8,0,3],['Nadi Shodhana','A gentle, balanced rhythm.',4,4,6,2,3],['Kapalabhati','A short, energizing breathing exercise.',2,0,2,0,3]];
 let v=[4,4,6,2],customDuration=10,s,t,cachedVoice=null,voiceVolume=1,firstExercisePending=true;
-const $=x=>document.getElementById(x),words={INHALE:'Inhale',HOLD:'Hold',EXHALE:'Exhale'};
+const $=x=>document.getElementById(x),words={INHALE:'INHALE',HOLD:'HOLD',EXHALE:'EXHALE'};
 function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile')loadAudioSettings()}
-function greeting(){let h=new Date().getHours();return h<5?'Good night':h<12?'Good morning':h<18?'Good afternoon':'Good evening'}
+function greeting(){let h=new Date().getHours();return h<5?'Gute Nacht':h<12?'Guten Morgen':h<18?'Guten Tag':'Guten Abend'}
 $('greeting').textContent=greeting();
 function loadSaved(){try{return JSON.parse(localStorage.getItem('doogie_saved_exercises')||'[]')}catch(e){return[]}}
 function saveSaved(a){localStorage.setItem('doogie_saved_exercises',JSON.stringify(a))}
@@ -114,22 +114,57 @@ function recordAppDay(){let d=new Date();let key=d.getFullYear()+'-'+String(d.ge
 function formatHistoryDate(key){let p=key.split('-');let d=new Date(Number(p[0]),Number(p[1])-1,Number(p[2]));return d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
 function renderHistory(){let a=loadHistory();$('historyList').innerHTML=a.length?a.map((d,i)=>`<div class="routine" style="margin-bottom:9px"><div class="icon">✓</div><div class="routineInfo"><b>${formatHistoryDate(d)}</b><span>${i===0?'Latest app launch':'App opened'}</span></div></div>`).join(''):`<p class="empty">No app launch days recorded yet.</p>`}
 function loadAudioSettings(){voiceVolume=Number(localStorage.getItem('doogie_voice_volume')??'1');if(!Number.isFinite(voiceVolume))voiceVolume=1;const el=$('voiceVolume');const out=$('voiceVolumeValue');if(el)el.value=voiceVolume;if(out)out.textContent=Math.round(voiceVolume*100)+'%'}
-function setVoiceVolume(x){voiceVolume=Math.max(0,Math.min(1,Number(x)));localStorage.setItem('doogie_voice_volume',String(voiceVolume));$('voiceVolumeValue').textContent=Math.round(voiceVolume*100)+'%'}
+function setVoiceVolume(x){voiceVolume=Math.max(0,Math.min(1,Number(x)));localStorage.setItem('doogie_voice_volume',String(voiceVolume));$('voiceVolumeValue').textContent=Math.round(voiceVolume*100)+'%';}
 loadAudioSettings();
-function pickVoice(){cachedVoice=pickEnglishVoice()}
-function pickEnglishVoice(){if(!('speechSynthesis'in window))return null;let voices=speechSynthesis.getVoices();let femaleEN=['Samantha','Ava','Karen','Moira','Tessa','Victoria','Allison','Susan'];return voices.find(x=>x.lang.toLowerCase().startsWith('en')&&femaleEN.some(n=>x.name.toLowerCase().includes(n.toLowerCase())))||voices.find(x=>x.lang.toLowerCase().startsWith('en-US'))||voices.find(x=>x.lang.toLowerCase().startsWith('en'))||null}
-if('speechSynthesis'in window){speechSynthesis.addEventListener('voiceschanged',pickVoice);pickVoice()}
-function speak(text){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang=cachedVoice?cachedVoice.lang:'de-DE';u.rate=text==='Hold'?.66:.56;u.pitch=1.08;u.volume=voiceVolume;if(cachedVoice)u.voice=cachedVoice;speechSynthesis.speak(u)}
-function welcome(after){if(!('speechSynthesis' in window)){if(after)setTimeout(after,5000);return;}speechSynthesis.cancel();let v=pickEnglishVoice();let u1=new SpeechSynthesisUtterance("Hello, Doogie.");u1.lang=v?v.lang:'en-US';u1.rate=.68;u1.pitch=1.08;u1.volume=voiceVolume;if(v)u1.voice=v;u1.onend=()=>setTimeout(()=>{let u2=new SpeechSynthesisUtterance("Trust is where everything begins, so let’s start.");u2.lang=v?v.lang:'en-US';u2.rate=.68;u2.pitch=1.08;u2.volume=voiceVolume;if(v)u2.voice=v;u2.onend=()=>setTimeout(()=>{if(after)after()},5000);speechSynthesis.speak(u2)},500);speechSynthesis.speak(u1)}
-function chime(){try{let C=window.AudioContext||window.webkitAudioContext;if(!C)return;let c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.035,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.13);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.14)}catch(e){}}
-function start(p){clearInterval(t);let q=[['INHALE',p[2],1],['HOLD',p[3],1],['EXHALE',p[4],0],['HOLD',p[5],0]].filter(x=>x[1]);s={p,q,i:0,n:q[0][1],round:1,completed:0,e:0,total:(p[7]||p[6])*60,stop:0};show('session');paint();let begin=()=>{chime();speak(words.INHALE);t=setInterval(tick,1000)};if(firstExercisePending){firstExercisePending=false;welcome(begin)}else begin()}
+
+// Voice is played as local audio through Web Audio rather than speechSynthesis.
+// AudioSession is explicitly ambient where supported so the app asks to mix,
+// not to duck or interrupt audio from another app.
+let audioCtx=null,audioBuffers={},voiceSource=null,voiceGain=null;
+const voiceFiles={hello:'audio/hello.mp3',start:'audio/start.mp3',INHALE:'audio/inhale.mp3',HOLD:'audio/hold.mp3',EXHALE:'audio/exhale.mp3',done:'audio/done.mp3',morning:'audio/morning.mp3',afternoon:'audio/afternoon.mp3',evening:'audio/evening.mp3',night:'audio/night.mp3'};
+function configureAudioMix(){try{if(navigator.audioSession&&'type'in navigator.audioSession)navigator.audioSession.type='ambient';}catch(e){}}
+async function ensureAudio(){
+  configureAudioMix();
+  const C=window.AudioContext||window.webkitAudioContext;
+  if(!C)return false;
+  if(!audioCtx)audioCtx=new C();
+  if(audioCtx.state==='suspended')await audioCtx.resume();
+  const jobs=Object.entries(voiceFiles).filter(([k])=>!audioBuffers[k]).map(async([k,url])=>{
+    try{const r=await fetch(url,{cache:'force-cache'});const b=await r.arrayBuffer();audioBuffers[k]=await audioCtx.decodeAudioData(b);}
+    catch(e){console.warn('Voice audio unavailable:',k,e)}
+  });
+  await Promise.all(jobs);
+  return true;
+}
+function stopVoice(){if(voiceSource){try{voiceSource.stop()}catch(e){}voiceSource.disconnect();voiceSource=null}if(voiceGain){voiceGain.disconnect();voiceGain=null}}
+function playVoice(key,onEnd){
+  if(!audioCtx||!audioBuffers[key]){if(onEnd)setTimeout(onEnd,250);return}
+  stopVoice();
+  const src=audioCtx.createBufferSource(),g=audioCtx.createGain();
+  src.buffer=audioBuffers[key];g.gain.setValueAtTime(Math.max(0,voiceVolume),audioCtx.currentTime);
+  src.connect(g).connect(audioCtx.destination);voiceSource=src;voiceGain=g;
+  src.onended=()=>{if(voiceSource===src){voiceSource=null;voiceGain=null}if(onEnd)onEnd()};
+  src.start();
+}
+function speak(key,onEnd){configureAudioMix();playVoice(key,onEnd)}
+function welcome(after){
+  playVoice('hello',()=>setTimeout(()=>playVoice('start',()=>setTimeout(()=>{if(after)after()},5000)),500));
+}
+function chime(){try{if(!audioCtx)return;let c=audioCtx,o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.035,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.13);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.14)}catch(e){}}
+async function start(p){
+  clearInterval(t);await ensureAudio();
+  let q=[['INHALE',p[2],1],['HOLD',p[3],1],['EXHALE',p[4],0],['HOLD',p[5],0]].filter(x=>x[1]);
+  s={p,q,i:0,n:q[0][1],round:1,completed:0,e:0,total:(p[7]||p[6])*60,stop:0};show('session');paint();
+  let begin=()=>{chime();speak(words.INHALE);t=setInterval(tick,1000)};
+  if(firstExercisePending){firstExercisePending=false;welcome(begin)}else begin();
+}
 function tick(){if(s.stop)return;s.e++;if(s.e>=s.total){finish();return}if(s.n>1)s.n--;else if(s.i<s.q.length-1){s.i++;s.n=s.q[s.i][1];chime();speak(words[s.q[s.i][0]])}else{s.completed++;s.round++;s.i=0;s.n=s.q[0][1];chime();speak(words[s.q[0][0]])}paint()}
-function paint(){let x=s.q[s.i],left=s.total-s.e;$('ph').textContent=x[0]==='INHALE'?'Inhale':x[0]==='HOLD'?'Hold':'Exhale';$('co').textContent=String(s.n).padStart(2,'0');$('r').textContent=`REMAINING ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;$('orb').className='orb '+(x[2]?'big':'')}
-function pause(){s.stop=!s.stop;if(s.stop){if('speechSynthesis'in window)speechSynthesis.cancel();$('pa').innerHTML='▶&nbsp; Resume';}else{$('pa').innerHTML='Ⅱ&nbsp; Pause';chime();speak(words[s.q[s.i][0]]);}}
+function paint(){let x=s.q[s.i],left=s.total-s.e;$('ph').textContent=x[0]==='INHALE'?'Einatmen':x[0]==='HOLD'?'Halten':'Ausatmen';$('co').textContent=String(s.n).padStart(2,'0');$('r').textContent=`REMAINING ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;$('orb').className='orb '+(x[2]?'big':'')}
+function pause(){s.stop=!s.stop;if(s.stop){stopVoice();$('pa').innerHTML='▶&nbsp; Resume';}else{$('pa').innerHTML='Ⅱ&nbsp; Pause';chime();speak(s.q[s.i][0]);}}
 function mod(x){$('modal').classList.toggle('on',!!x)}
-function quit(){clearInterval(t);if('speechSynthesis'in window)speechSynthesis.cancel();mod(0);show('home')}
-function completionMessage(){let h=new Date().getHours();if(h>=5&&h<12)return 'I wish you a good morning.';if(h>=12&&h<18)return 'I wish you a pleasant afternoon.';if(h>=18&&h<22)return 'I wish you a pleasant evening.';return 'I wish you a good night.'}
-function finish(){clearInterval(t);speak('Well done, Doogie. '+completionMessage());$('dg').textContent=completionMessage();$('dc').textContent=`You completed ${s.p[0]} successfully.`;$('dr').textContent=s.completed;$('dt').textContent=`${Math.floor(s.total/60)}:${String(Math.floor((s.total%60))).padStart(2,'0')}`;$('dn').textContent=s.p[0];show('done')}
+function quit(){clearInterval(t);stopVoice();mod(0);show('home')}
+function completionMessage(){let h=new Date().getHours();if(h>=5&&h<12)return ['morning','Ich wünsche dir einen guten Morgen.'];if(h>=12&&h<18)return ['afternoon','Ich wünsche dir einen angenehmen Nachmittag.'];if(h>=18&&h<22)return ['evening','Ich wünsche dir einen angenehmen Abend.'];return ['night','Ich wünsche dir eine gute Nacht.']}
+function finish(){clearInterval(t);let msg=completionMessage();speak('done',()=>speak(msg[0]));$('dg').textContent=msg[1];$('dc').textContent=`Du hast ${s.p[0]} erfolgreich abgeschlossen.`;$('dr').textContent=s.completed;$('dt').textContent=`${Math.floor(s.total/60)}:${String(Math.floor((s.total%60))).padStart(2,'0')}`;$('dn').textContent=s.p[0];show('done')}
 function toast(text){let e=$('toast');e.textContent=text;e.classList.add('on');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('on'),1800)}
 recordAppDay();renderHome();renderPresets();renderHistory();loadAudioSettings();
 </script></div>
