@@ -131,6 +131,63 @@ html,body{overscroll-behavior:none}
   text-align:center!important;
   white-space:nowrap!important;
 }
+
+/* iOS-style reflective edge highlight */
+.session .sessionBack,
+.pause,
+.done .primary,
+.primary,
+.end,
+.cancel,
+.saveBtn,
+.step,
+.dots,
+.trash {
+  position: relative;
+  overflow: hidden;
+}
+.session .sessionBack::before,
+.pause::before,
+.done .primary::before,
+.primary::before,
+.end::before,
+.cancel::before,
+.saveBtn::before,
+.step::before,
+.dots::before,
+.trash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.55),
+    inset 1px 0 0 rgba(255,255,255,.20),
+    inset -1px 0 0 rgba(255,255,255,.08);
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.18) 0%,
+    rgba(255,255,255,.06) 18%,
+    rgba(255,255,255,0) 42%,
+    rgba(255,255,255,0) 72%,
+    rgba(255,255,255,.05) 100%
+  );
+}
+.session .sessionBack > *,
+.pause > *,
+.done .primary > *,
+.primary > *,
+.end > *,
+.cancel > *,
+.saveBtn > *,
+.step > *,
+.dots > *,
+.trash > * {
+  position: relative;
+  z-index: 1;
+}
+
 </style>
 
 </head>
@@ -159,7 +216,7 @@ html,body{overscroll-behavior:none}
 
 <section id="custom" class="screen">
   <div class="header"><button class="back" onclick="show('profile')">‹</button><h2 class="serif">Atemzeiten</h2></div>
-  <p class="sub" style="color:#756684">Erstelle eine eigene Atemübung und speichere sie direkt auf diesem iPhone.</p>
+  <p class="sub" style="color:#756684">Erstelle eine eigene 9er Serie und speichere sie direkt auf diesem iPhone.</p>
   <div id="fields"></div>
   <div class="row"><label>Trainingsdauer</label><button class="step" onclick="setDuration(-1)">−</button><span class="value" id="durationValue">10 min</span><button class="step" onclick="setDuration(1)">+</button></div>
   <input id="presetName" class="field" placeholder="Name, z. B. Entspannung" maxlength="30">
@@ -196,7 +253,7 @@ html,body{overscroll-behavior:none}
 
 <aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Training beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Training beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
 <script>
-const P=[['Box Breathing','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',4,4,4,4,3],['4–7–8','Ein längeres Ausatmen für innere Ruhe.',4,7,8,0,3],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
+const P=[['9er Serie','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',4,9,4,9,15],['11er Serie','Ein ruhiger Vier-Phasen-Rhythmus.',4,11,4,11,15],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
 let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true;
 const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
 function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile')loadAudioSettings()}
@@ -259,14 +316,14 @@ function loadSaved(){try{return JSON.parse(localStorage.getItem('doogie_saved_ex
 function saveSaved(a){localStorage.setItem('doogie_saved_exercises',JSON.stringify(a))}
 function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function routineHTML(p,i,allowDelete=true){let detail=`${p.duration||10} min · ${p.values[0]}–${p.values[1]}–${p.values[2]}–${p.values[3]} sec`;return `<div class="routine"><div class="routineInfo" onclick="startSaved(${i})"><b>${escapeHtml(p.name)}</b><span>${detail}</span></div><button class="dots" onclick="startSaved(${i})">›</button>${allowDelete?`<button class="trash" onclick="deleteSaved(event,${i})" aria-label="Atemübung löschen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.25 7.25h9.5l-.55 11.2a1.35 1.35 0 0 1-1.35 1.28H9.15a1.35 1.35 0 0 1-1.35-1.28L7.25 7.25Z" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/><path d="M5.75 7.25h12.5M9.25 4.75h5.5l.85 2.5H8.4l.85-2.5Z" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 10.5v5.8M14 10.5v5.8" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg></button>`:''}</div>`}
-function renderHome(){let list=loadSaved();$('savedHome').innerHTML=list.length?[...list].reverse().map((p,ri)=>routineHTML(p,list.length-1-ri)).join(''):`<p class="empty">Noch keine gespeicherten Atemübungen. Öffne die Einstellungen, um eine anzulegen.</p>`}
+function renderHome(){let list=loadSaved();let presets=P.slice(0,2).map((x)=>({name:x[0],values:[x[2],x[3],x[4],x[5]],duration:x[6]}));let saved=[...list].reverse().map((p,ri)=>routineHTML(p,list.length-1-ri)).join('');$('savedHome').innerHTML=presets.map((p,i)=>routineHTML(p,-(i+1),false)).join('')+saved}
 function renderFields(){$('fields').innerHTML=['Einatmen','Halten','Ausatmen','Halten'].map((n,i)=>`<div class="row"><label>${n}</label><button class="step" onclick="setVal(${i},-1)">−</button><span class="value">${v[i]} sec</span><button class="step" onclick="setVal(${i},1)">+</button></div>`).join('');$('durationValue').textContent=customDuration+' min'}
 function setDuration(d){customDuration=Math.max(1,Math.min(60,customDuration+d));renderFields()}
 function setVal(i,d){v[i]=Math.max(i===4?1:0,Math.min(i===4?60:20,v[i]+d));renderFields()}
 function custom(){return ['Custom','Dein Atemrhythmus',...v,customDuration]}
 function renderPresets(){let list=loadSaved();$('presetList').innerHTML=list.length?list.map((p,i)=>routineHTML(p,i)).join(''):`<p class="empty">Noch keine gespeicherten Atemübungen.</p>`;renderFields()}
 function savePreset(){let name=$('presetName').value.trim();if(!name){$('presetName').focus();toast('Bitte einen Namen eingeben');return}let a=loadSaved();a.push({name,values:[...v],duration:customDuration});saveSaved(a);$('presetName').value='';renderPresets();renderHome();toast('Atemübung gespeichert')}
-function startSaved(i){let p=loadSaved()[i];if(p)start([p.name,'Gespeicherte Atemübung',...p.values,p.duration])}
+function startSaved(i){if(i===-1){start(P[0]);return}if(i===-2){start(P[1]);return}let p=loadSaved()[i];if(p)start([p.name,'Gespeicherte Atemübung',...p.values,p.duration])}
 function startLatest(){let list=loadSaved();if(list.length){let p=list[list.length-1];start([p.name,'Gespeicherte Atemübung',...p.values,p.duration])}else{start(P[0])}}
 function deleteSaved(ev,i){ev.stopPropagation();let a=loadSaved();let name=a[i]?.name||'Breathing exercise';a.splice(i,1);saveSaved(a);renderHome();renderPresets();toast(name+' gelöscht')}
 function loadHistory(){try{return JSON.parse(localStorage.getItem('doogie_app_days')||'[]')}catch(e){return[]}}
