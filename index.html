@@ -18,7 +18,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;background:#000;color:var(--deep);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",sans-serif;-webkit-font-smoothing:antialiased}
 body{overflow-x:hidden}.app{position:relative;max-width:500px;min-height:100dvh;margin:auto;overflow:hidden;background:transparent}
-.bg{position:fixed;inset:0;max-width:500px;margin:auto;background:url('background.jpg') center/cover no-repeat;filter:grayscale(1) contrast(1.03);transform:scale(1.02);z-index:0}.bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(255,255,255,.36) 0%,rgba(255,255,255,.20) 28%,rgba(255,255,255,0) 58%);pointer-events:none}
+.bg{position:fixed;inset:0;max-width:500px;margin:auto;background:url('background.jpg') center/cover no-repeat;filter:grayscale(1) contrast(1.03);transform:scale(1.02);z-index:0}.bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.36) 0%,rgba(0,0,0,.20) 28%,rgba(0,0,0,0) 58%);pointer-events:none}
 
 .content{position:relative;z-index:1;min-height:100dvh;padding:calc(env(safe-area-inset-top) + 24px) 24px calc(env(safe-area-inset-bottom) + 32px)}
 .screen{display:none;min-height:calc(100dvh - 24px);flex-direction:column}.on{display:flex;animation:fade .28s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
@@ -36,10 +36,16 @@ body{overflow-x:hidden}.app{position:relative;max-width:500px;min-height:100dvh;
 .toast{position:fixed;z-index:30;left:50%;bottom:108px;transform:translate(-50%,15px);opacity:0;background:rgba(54,39,73,.92);color:#fff;border-radius:16px;padding:11px 16px;font-size:14px;pointer-events:none;transition:.25s}.toast.on{opacity:1;transform:translate(-50%,0)}
 @media(max-width:380px){h1{font-size:49px}.startBtn{width:200px;height:200px}.startWrap{margin:40px 0 34px}.content{padding-left:18px;padding-right:18px}}
 
-/* v38 layout corrections */
-.session .sessionBack,.session #r{position:relative;}
-.sessionContent{will-change:auto;}
-.pause{background:rgba(255,255,255,.20)!important;border:1px solid rgba(255,255,255,.62)!important;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+/* v40 fixed iPhone session layout */
+html,body{overscroll-behavior:none}
+.session{position:relative!important;height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;flex:0 0 100dvh!important}
+.session .topline{position:absolute!important;top:env(safe-area-inset-top)!important;left:0!important;right:0!important;height:84px!important;padding:24px 24px 16px!important;margin:0!important;z-index:100!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;pointer-events:none!important}
+.session .sessionBack,.session #r{pointer-events:auto!important;position:relative!important;z-index:101!important}
+.session .sessionBack{margin:0!important}
+.session #r{margin:12px 0 0 auto!important}
+.sessionContent{position:absolute!important;left:24px!important;right:24px!important;top:calc(env(safe-area-inset-top) + 84px)!important;bottom:calc(env(safe-area-inset-bottom) + 136px)!important;height:auto!important;margin:0!important;transform:none!important;z-index:10!important;overflow:hidden!important}
+.pause{position:absolute!important;left:24px!important;right:24px!important;bottom:calc(env(safe-area-inset-bottom) + 40px)!important;width:auto!important;min-width:0!important;margin:0 auto!important;transform:none!important;z-index:100!important;background:rgba(255,255,255,.20)!important;border:1px solid rgba(255,255,255,.62)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
+.pause:active{transform:scale(.97)!important}
 </style>
 </head>
 <body>
