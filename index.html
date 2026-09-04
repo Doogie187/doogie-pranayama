@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600&display=swap" rel="stylesheet">
 <style>
-:root{--purple:#7456a7;--purple2:#a48acb;--deep:#3e2d5e;--white:#fff;--glass:rgba(255,255,255,.84);--line:rgba(255,255,255,.55);--muted:#8d7ca8;--danger:#9b4d63;--bg:#eeeaf3}
+:root{--purple:#7456a7;--purple2:#a48acb;--deep:#3e2d5e;--white:#fff;--glass:rgba(255,255,255,.50);--line:rgba(255,255,255,.55);--muted:#8d7ca8;--danger:#9b4d63;--bg:#eeeaf3}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;background:#000;color:var(--deep);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",sans-serif;-webkit-font-smoothing:antialiased}
 body{overflow-x:hidden}.app{position:relative;max-width:500px;min-height:100dvh;margin:auto;overflow:hidden;background:var(--bg)}
@@ -22,28 +22,28 @@ body{overflow-x:hidden}.app{position:relative;max-width:500px;min-height:100dvh;
 .bg:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(43,30,58,.30),rgba(117,86,167,.13) 36%,rgba(245,242,249,.92) 86%,#eeeaf3 100%)}
 .content{position:relative;z-index:1;min-height:100dvh;padding:calc(env(safe-area-inset-top) + 24px) 24px calc(env(safe-area-inset-bottom) + 32px)}
 .screen{display:none;min-height:calc(100dvh - 24px);flex-direction:column}.on{display:flex;animation:fade .28s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.serif{font-family:Fraunces,serif}h1{margin:0;font-size:58px;line-height:.94;font-weight:300;letter-spacing:-2px;color:#fff}h1 i{font-style:normal}h2{margin:0;font-size:32px;letter-spacing:-.8px;font-weight:600}.sub{color:rgba(255,255,255,.86);font-size:16px;line-height:1.4}.eyebrow{margin:0 0 8px;text-transform:none;color:#c7b0e3;font-size:18px;font-weight:500}.topline{display:flex;align-items:center;justify-content:space-between}.gear{width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.55);background:rgba(216,195,239,.72);color:var(--deep);font-size:25px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.serif{font-family:Fraunces,serif}h1{margin:0;font-size:58px;line-height:.94;font-weight:300;letter-spacing:-2px;color:#fff}h1 i{font-style:normal}h2{margin:0;font-size:32px;letter-spacing:-.8px;font-weight:600}.sub{color:rgba(255,255,255,.86);font-size:16px;line-height:1.4}.eyebrow{margin:0 0 8px;text-transform:none;color:#fff;font-size:18px;font-weight:500}.topline{display:flex;align-items:center;justify-content:space-between}.gear{width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.55);background:rgba(216,195,239,.50);color:var(--deep);font-size:25px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .heroCopy{margin-top:8px}.tagline{margin:18px 0 0;color:#fff;font-size:22px;font-weight:400}.sp{flex:1}
-.startWrap{display:flex;justify-content:center;margin:52px 0 44px}.startBtn{width:300px;height:300px;border-radius:50%;border:1px solid rgba(255,255,255,.78);background:radial-gradient(circle at 35% 25%,rgba(205,181,231,.72),rgba(132,99,177,.72) 64%,rgba(100,73,143,.72));box-shadow:0 20px 55px rgba(58,36,88,.35),inset 0 0 28px rgba(255,255,255,.18);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.lotus{width:74px;height:74px;margin-bottom:12px;display:grid;place-items:center;color:#fff}.lotus svg{width:68px;height:68px;display:block;filter:drop-shadow(0 3px 8px rgba(62,45,94,.16))}.startBtn strong{font-size:21px}.startBtn span{margin-top:6px;font-size:17px;color:#eadff4}
+.startWrap{display:flex;justify-content:center;margin:52px 0 44px}.startBtn{width:220px;height:220px;border-radius:50%;border:1px solid rgba(255,255,255,.78);background:radial-gradient(circle at 35% 25%,rgba(205,181,231,.72),rgba(132,99,177,.72) 64%,rgba(100,73,143,.72));box-shadow:0 20px 55px rgba(58,36,88,.35),inset 0 0 28px rgba(255,255,255,.18);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.lotus{width:74px;height:74px;margin-bottom:12px;display:grid;place-items:center;color:#fff}.lotus svg{width:68px;height:68px;display:block;filter:drop-shadow(0 2px 6px rgba(62,45,94,.14))}.lotus svg g{stroke-linecap:round;stroke-linejoin:round}.startBtn strong{font-size:21px}.startBtn span{margin-top:6px;font-size:17px;color:#eadff4}
 .sectionTitle{display:flex;align-items:center;justify-content:space-between;margin:0 4px 12px;color:#c8afe4;text-transform:uppercase;letter-spacing:2px;font-size:14px;font-weight:700}.edit{border:0;background:none;color:#c8afe4;font-size:17px;font-weight:500}
 .savedList{display:flex;flex-direction:column;gap:9px}.routine{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid rgba(255,255,255,.66);border-radius:22px;padding:14px 13px;box-shadow:0 8px 25px rgba(63,40,90,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.icon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:rgba(199,178,225,.38);color:var(--purple);font-size:27px}.routineInfo{flex:1;min-width:0}.routineInfo b{display:block;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.routineInfo span{display:block;margin-top:4px;color:#9a8aad;font-size:14px}.dots,.trash,.star{border:0;background:none;color:var(--purple);font-size:25px;width:42px;height:42px;border-radius:50%}.trash{font-size:22px;background:rgba(218,204,231,.32)}.empty{margin:0;padding:14px;color:#a090b1;font-size:15px;background:rgba(255,255,255,.66);border-radius:18px}
+.icon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:rgba(199,178,225,.38);color:var(--purple);font-size:27px}.routineInfo{flex:1;min-width:0}.routineInfo b{display:block;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.routineInfo span{display:block;margin-top:4px;color:#9a8aad;font-size:14px}.dots,.trash,.star{border:0;color:var(--purple);font-size:25px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center}.dots{background:rgba(255,255,255,.50);border:1px solid rgba(255,255,255,.58);font-size:23px}.trash{width:54px;height:54px;display:grid;place-items:center;background:rgba(218,204,235,.50);border:1px solid rgba(255,255,255,.60);padding:0;box-shadow:inset 0 1px 1px rgba(255,255,255,.28)}.trash svg{width:25px;height:25px;display:block;stroke-width:1.65}.empty{margin:0;padding:14px;color:#a090b1;font-size:15px;background:rgba(255,255,255,.50);border-radius:18px}
 .bottom{display:none;position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 12px);width:min(452px,calc(100% - 36px));height:78px;border:1px solid rgba(255,255,255,.75);border-radius:27px;background:rgba(255,255,255,.70);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);grid-template-columns:repeat(4,1fr);box-shadow:0 10px 30px rgba(48,29,73,.12)}
-.header{display:flex;align-items:center;gap:12px;margin-bottom:22px}.back{border:0;background:rgba(255,255,255,.65);width:42px;height:42px;border-radius:50%;color:var(--deep);font-size:25px}.panel{background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.72);border-radius:24px;padding:16px;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);box-shadow:0 10px 30px rgba(56,35,80,.08)}.exercise{display:flex;align-items:center;gap:12px;margin-bottom:10px}.exercise:last-child{margin-bottom:0}.exercise .routineInfo b{color:var(--deep)}.saveBtn{border:0;background:rgba(204,187,223,.35);color:var(--purple);width:44px;height:44px;border-radius:50%;font-size:22px}.saveBtn.saved{background:var(--purple);color:#fff}.field{width:100%;border:1px solid rgba(112,83,153,.20);border-radius:16px;background:rgba(255,255,255,.78);padding:14px 15px;font-size:16px;color:var(--deep);margin:7px 0}.row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.65);border-radius:16px;padding:9px 10px;margin:8px 0}.row label{flex:1;font-weight:600}.step{border:0;width:36px;height:36px;border-radius:50%;background:#eee7f4;color:var(--purple);font-size:21px}.value{width:54px;text-align:center;font-weight:650}.primary{width:100%;border:0;border-radius:17px;background:linear-gradient(180deg,#9c83c2,#7456a7);color:#fff;padding:15px;font-size:17px;font-weight:650;box-shadow:0 10px 25px rgba(91,62,130,.25)}
-.session{text-align:center}.session .topline{margin-bottom:20px}.sessionBg{position:absolute;inset:0;background:rgba(238,234,243,.25);z-index:-1}.phase{margin-top:28px;color:var(--purple);font-size:13px;letter-spacing:3px;text-transform:uppercase;font-weight:750}.count{font:300 70px/1 Fraunces,serif;margin:12px 0 25px;color:var(--deep)}.orbBox{height:250px;display:grid;place-items:center}.orb{position:relative;height:100px;width:100px;border-radius:50%;background:radial-gradient(circle at 35% 25%,#e5d7f2,#a58ac8 54%,#7456a7);border:1px solid rgba(255,255,255,.8);box-shadow:0 20px 48px rgba(82,52,112,.30),inset 0 0 25px rgba(255,255,255,.25);transition:transform 2.2s cubic-bezier(.37,0,.63,1),box-shadow 2.2s ease;isolation:isolate;animation:orbFloat 6.5s ease-in-out infinite}.orb::before,.orb::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(205,181,231,.55);pointer-events:none;z-index:-1;animation:orbWave 5.8s cubic-bezier(.22,.61,.36,1) infinite}.orb::after{inset:-8px;animation-delay:2.9s;border-color:rgba(255,255,255,.35)}@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.012)}}@keyframes orbWave{0%{transform:scale(.90);opacity:.52}45%{opacity:.30}100%{transform:scale(1.52);opacity:0}}.big{height:180px;width:180px;box-shadow:0 24px 65px rgba(82,52,112,.34),inset 0 0 30px rgba(255,255,255,.27)}@media(prefers-reduced-motion:reduce){.orb,.orb::before,.orb::after{animation:none}}.pause{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 100px);transform:translateX(-50%);z-index:12;min-width:190px;border:1px solid rgba(255,255,255,.78);background:rgba(255,255,255,.78);color:var(--purple);font-size:16px;font-weight:650;padding:14px 20px;border-radius:22px;box-shadow:0 10px 30px rgba(56,35,80,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);transition:.2s}.pause:active{transform:translateX(-50%) scale(.97)}.done{text-align:center;justify-content:center}.check{font-size:58px;color:var(--purple)}.done .sub{color:#8d7ca0}.metrics{display:flex;gap:10px;margin:28px 0}.metrics div{flex:1;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.7);border-radius:18px;padding:13px 5px}.metrics b{display:block;font-size:17px}.metrics span{color:#998ba7;font-size:12px}
-.modal{display:none;position:fixed;inset:0;z-index:20;background:rgba(44,28,62,.34);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:flex-end}.modal.on{display:flex}.sheet{width:100%;background:#f2eef5;border-radius:27px 27px 0 0;padding:16px 24px calc(env(safe-area-inset-bottom) + 24px);text-align:center}.handle{width:38px;height:5px;border-radius:5px;background:#d0c5d8;margin:0 auto 18px}.end{width:100%;border:0;border-radius:16px;background:#f1dfe5;color:var(--danger);padding:15px;font-size:16px;font-weight:650}.cancel{border:0;background:none;padding:14px;color:var(--purple);font-size:16px;font-weight:600}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:22px}.back{border:1px solid rgba(255,255,255,.62);background:rgba(255,255,255,.50);width:42px;height:42px;border-radius:50%;color:var(--deep);font-size:25px;display:grid;place-items:center;line-height:1;box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 6px 18px rgba(56,35,80,.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(18px)}.panel{background:rgba(255,255,255,.50);border:1px solid rgba(255,255,255,.72);border-radius:24px;padding:16px;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);box-shadow:0 10px 30px rgba(56,35,80,.08)}.exercise{display:flex;align-items:center;gap:12px;margin-bottom:10px}.exercise:last-child{margin-bottom:0}.exercise .routineInfo b{color:var(--deep)}.saveBtn{border:0;background:rgba(204,187,223,.35);color:var(--purple);width:44px;height:44px;border-radius:50%;font-size:22px}.saveBtn.saved{background:var(--purple);color:#fff}.field{width:100%;border:1px solid rgba(112,83,153,.20);border-radius:16px;background:rgba(255,255,255,.50);padding:14px 15px;font-size:16px;color:var(--deep);margin:7px 0}.row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.50);border-radius:16px;padding:9px 10px;margin:8px 0}.row label{flex:1;font-weight:600}.step{border:0;width:36px;height:36px;border-radius:50%;background:#eee7f4;color:var(--purple);font-size:21px}.value{width:54px;text-align:center;font-weight:650}.primary{width:100%;border:0;border-radius:17px;background:linear-gradient(180deg,#9c83c2,#7456a7);color:#fff;padding:15px;font-size:17px;font-weight:650;box-shadow:0 10px 25px rgba(91,62,130,.25)}
+.session{text-align:center}.session .topline{margin-bottom:20px;justify-content:space-between;align-items:center}.session .sessionBack{width:auto;min-width:100px;height:44px;padding:0 16px;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px;border-radius:22px}.session #r{flex:0 0 auto;white-space:nowrap;min-width:92px;text-align:right}.sessionBg{position:absolute;inset:0;background:rgba(238,234,243,.25);z-index:-1}.phase{margin-top:28px;color:var(--purple);font-size:13px;letter-spacing:3px;text-transform:uppercase;font-weight:750}.count{font:300 70px/1 Fraunces,serif;margin:12px 0 25px;color:var(--deep)}.orbBox{height:250px;display:grid;place-items:center}.orb{position:relative;height:140px;width:140px;border-radius:50%;background:radial-gradient(circle at 35% 25%,#e5d7f2,#a58ac8 54%,#7456a7);border:1px solid rgba(255,255,255,.8);box-shadow:0 20px 48px rgba(82,52,112,.30),inset 0 0 25px rgba(255,255,255,.25);transition:transform 2.4s cubic-bezier(.37,0,.63,1),box-shadow 2.4s ease;isolation:isolate;animation:orbPulse 4.8s ease-in-out infinite}.orb::before,.orb::after{display:none}@keyframes orbPulse{0%,100%{transform:scale(.86);box-shadow:0 17px 42px rgba(82,52,112,.24),inset 0 0 22px rgba(255,255,255,.21)}50%{transform:scale(1.14);box-shadow:0 25px 60px rgba(82,52,112,.35),inset 0 0 31px rgba(255,255,255,.30)}}.big{height:140px;width:140px;box-shadow:0 20px 48px rgba(82,52,112,.30),inset 0 0 25px rgba(255,255,255,.25)}@media(prefers-reduced-motion:reduce){.orb{animation:none}}.pause{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 100px);transform:translateX(-50%);z-index:12;min-width:190px;border:1px solid rgba(255,255,255,.78);background:rgba(255,255,255,.50);color:var(--purple);font-size:16px;font-weight:650;padding:14px 20px;border-radius:22px;box-shadow:0 10px 30px rgba(56,35,80,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);transition:.2s}.pause:active{transform:translateX(-50%) scale(.97)}.done{text-align:center;justify-content:center}.check{font-size:58px;color:var(--purple)}.done .sub{color:#8d7ca0}.metrics{display:flex;gap:10px;margin:28px 0}.metrics div{flex:1;background:rgba(255,255,255,.50);border:1px solid rgba(255,255,255,.7);border-radius:18px;padding:13px 5px}.metrics b{display:block;font-size:17px}.metrics span{color:#998ba7;font-size:12px}
+.modal{display:none;position:fixed;inset:0;z-index:20;background:rgba(44,28,62,.34);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:flex-end}.modal.on{display:flex}.sheet{width:100%;background:rgba(242,238,245,.50);border-radius:27px 27px 0 0;padding:16px 24px calc(env(safe-area-inset-bottom) + 24px);text-align:center}.handle{width:38px;height:5px;border-radius:5px;background:#d0c5d8;margin:0 auto 18px}.end{width:100%;border:0;border-radius:16px;background:#f1dfe5;color:var(--danger);padding:15px;font-size:16px;font-weight:650}.cancel{border:0;background:none;padding:14px;color:var(--purple);font-size:16px;font-weight:600}
 .toast{position:fixed;z-index:30;left:50%;bottom:108px;transform:translate(-50%,15px);opacity:0;background:rgba(54,39,73,.92);color:#fff;border-radius:16px;padding:11px 16px;font-size:14px;pointer-events:none;transition:.25s}.toast.on{opacity:1;transform:translate(-50%,0)}
-@media(max-width:380px){h1{font-size:49px}.startBtn{width:260px;height:260px}.startWrap{margin:40px 0 34px}.content{padding-left:18px;padding-right:18px}}
+@media(max-width:380px){h1{font-size:49px}.startBtn{width:200px;height:200px}.startWrap{margin:40px 0 34px}.content{padding-left:18px;padding-right:18px}}
 </style>
 </head>
 <body>
 <div class="app"><div class="bg"></div><main class="content">
 <section id="home" class="screen on">
-  <div class="topline"><div><p class="eyebrow" id="greeting">Guten Morgen</p><div class="heroCopy"><h1 class="serif">Doogie</h1><p class="tagline">Vertrauen ist der Anfang von allem.</p></div></div><button class="gear" onclick="show('profile')" aria-label="Einstellungen">⚙︎</button></div>
+  <div class="topline"><div><p class="eyebrow" id="greeting">Guten Morgen</p><div class="heroCopy"><h1 class="serif">Doogie</h1><p class="tagline">Vertrauen ist der Anfang von allem.</p></div></div></div>
   <div class="startWrap"><button class="startBtn" onclick="startLatest()"><div class="lotus" aria-hidden="true">
 <svg viewBox="0 0 100 100" role="img" aria-label="Lebensblume">
-  <g fill="none" stroke="currentColor" stroke-width="2.2">
+  <g transform="translate(50 50) scale(.76) translate(-50 -50)" fill="none" stroke="currentColor" stroke-width="2.2">
     <circle cx="50" cy="50" r="18"/>
     <circle cx="50" cy="32" r="18"/><circle cx="65.59" cy="41" r="18"/>
     <circle cx="65.59" cy="59" r="18"/><circle cx="50" cy="68" r="18"/>
@@ -92,7 +92,7 @@ body{overflow-x:hidden}.app{position:relative;max-width:500px;min-height:100dvh;
 
 <section id="history" class="screen"><div class="header"><button class="back" onclick="show('profile')">‹</button><h2 class="serif">Verlauf</h2></div><div class="panel"><div class="sectionTitle" style="color:#8069a0"><span>Tage geöffnet</span></div><div id="historyList"></div></div></section>
 
-<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back" onclick="mod(1)">×</button><span id="r" style="color:#806f91;font-size:12px;letter-spacing:1.5px;font-weight:700"></span></div><div class="sp"></div><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div><div class="sp"></div><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Pause</button></section>
+<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back sessionBack" onclick="quit()">‹&nbsp; Zurück</button><span id="r" style="color:#806f91;font-size:12px;letter-spacing:1.5px;font-weight:700"></span></div><div class="sp"></div><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div><div class="sp"></div><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Pause</button></section>
 
 <section id="done" class="screen done"><div class="check">✓</div><h1 class="serif" style="font-size:40px;color:#3e2d5e">Gut gemacht, Doogie.</h1><p class="sub" id="dg"></p><p class="sub" id="dc"></p><div class="metrics"><div><b id="dr"></b><span>Dauer</span></div><div><b id="dt"></b><span>Minuten</span></div><div><b id="dn"></b><span>Atemübung</span></div></div><button class="primary" onclick="show('home')">Fertig</button></section>
 </main>
@@ -103,12 +103,65 @@ const P=[['Box Breathing','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.'
 let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true;
 const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
 function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile')loadAudioSettings()}
-function greeting(){let h=new Date().getHours();return h<5?'Gute Nacht':h<12?'Guten Morgen':h<18?'Guten Tag':'Guten Abend'}
+function greeting(){let h=new Date().getHours();return h<5?'Gute Nacht':h<10?'Guten Morgen':h<12?'Guten Vormittag':h<14?'Guten Mittag':h<18?'Guten Nachmittag':h<22?'Guten Abend':'Gute Nacht'}
+const DAILY_QUOTES=[
+'Was wirklich wichtig ist, braucht keine Eile.',
+'Nicht alles, was zählt, lässt sich messen.',
+'Ruhe ist auch eine Entscheidung.',
+'Weniger kann mehr sein.',
+'Der nächste Schritt ist wichtiger als der perfekte Plan.',
+'Zeit ist das Wertvollste, was wir besitzen.',
+'Manchmal liegt die Antwort in der Pause.',
+'Veränderung beginnt mit einem Gedanken.',
+'Klarheit entsteht, wenn das Wesentliche bleibt.',
+'Du musst nicht alles gleichzeitig lösen.',
+'Geduld verändert den Blick auf die Dinge.',
+'Das Leben findet nicht später statt.',
+'Nicht jeder Weg muss schnell gegangen werden.',
+'Einfachheit ist oft die schwierigste Form der Klarheit.',
+'Was bleibt, wenn alles Unnötige wegfällt?',
+'Manchmal ist weniger Tun der bessere Weg.',
+'Der Augenblick ist der einzige Ort, an dem etwas geschehen kann.',
+'Was du heute tust, verändert dein Morgen.',
+'Jeder Tag beginnt mit einer Entscheidung.',
+'Kleine Schritte können große Veränderungen bewirken.',
+'Nicht jede Frage braucht sofort eine Antwort.',
+'Erfolg beginnt oft mit Konsequenz.',
+'Wirkliche Stärke braucht keine Lautstärke.',
+'Was du beeinflussen kannst, verdient deine Aufmerksamkeit.',
+'Ein klarer Gedanke kann einen ganzen Tag verändern.',
+'Nicht alles muss bleiben, nur weil es einmal wichtig war.',
+'Bewusst zu wählen bedeutet auch, bewusst wegzulassen.',
+'Zeit schafft nicht immer Abstand, aber Perspektive.',
+'Es ist nie zu spät, etwas anders zu betrachten.',
+'Zwischen Wollen und Tun liegt eine Entscheidung.',
+'Wer innehält, sieht oft mehr.',
+'Fortschritt muss nicht spektakulär sein.',
+'Was einfach wirkt, ist nicht immer einfach.',
+'Ein guter Anfang braucht keinen perfekten Moment.',
+'Grenzen schaffen manchmal Freiheit.',
+'Nicht jede Gelegenheit ist eine Verpflichtung.',
+'Konzentration bedeutet, dem Wesentlichen Raum zu geben.',
+'Gedanken sind Richtungen, keine Gewissheiten.',
+'Wirkliche Klarheit entsteht selten unter Druck.',
+'Es lohnt sich, die Dinge aus einem anderen Blickwinkel zu sehen.',
+'Was heute klein erscheint, kann morgen Bedeutung haben.',
+'Bewusstsein verändert, was wir wahrnehmen.',
+'Ein ruhiger Geist sieht Möglichkeiten, wo vorher nur Probleme waren.',
+'Nicht alles, was möglich ist, ist auch notwendig.',
+'Entscheidungen werden leichter, wenn das Wesentliche klar ist.',
+'Gute Dinge brauchen manchmal Zeit.',
+'Wer seinen Weg kennt, muss nicht jeden Umweg gehen.',
+'Ein neuer Blick kann mehr verändern als ein neuer Plan.',
+'Der Wert eines Augenblicks zeigt sich oft erst später.',
+'Vielleicht ist die wichtigste Frage: Was ist wirklich wichtig?'
+];
+function dailyQuote(){let d=new Date();let key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))>>>0;return DAILY_QUOTES[hash%DAILY_QUOTES.length]}
 $('greeting').textContent=greeting();
 function loadSaved(){try{return JSON.parse(localStorage.getItem('doogie_saved_exercises')||'[]')}catch(e){return[]}}
 function saveSaved(a){localStorage.setItem('doogie_saved_exercises',JSON.stringify(a))}
 function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function routineHTML(p,i,allowDelete=true){let detail=`${p.duration||10} min · ${p.values[0]}–${p.values[1]}–${p.values[2]}–${p.values[3]} sec`;return `<div class="routine"><div class="icon">≋</div><div class="routineInfo" onclick="startSaved(${i})"><b>${escapeHtml(p.name)}</b><span>${detail}</span></div><button class="dots" onclick="startSaved(${i})">›</button>${allowDelete?`<button class="trash" onclick="deleteSaved(event,${i})" aria-label="Delete">♜</button>`:''}</div>`}
+function routineHTML(p,i,allowDelete=true){let detail=`${p.duration||10} min · ${p.values[0]}–${p.values[1]}–${p.values[2]}–${p.values[3]} sec`;return `<div class="routine"><div class="routineInfo" onclick="startSaved(${i})"><b>${escapeHtml(p.name)}</b><span>${detail}</span></div><button class="dots" onclick="startSaved(${i})">›</button>${allowDelete?`<button class="trash" onclick="deleteSaved(event,${i})" aria-label="Atemübung löschen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.25 7.25h9.5l-.55 11.2a1.35 1.35 0 0 1-1.35 1.28H9.15a1.35 1.35 0 0 1-1.35-1.28L7.25 7.25Z" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/><path d="M5.75 7.25h12.5M9.25 4.75h5.5l.85 2.5H8.4l.85-2.5Z" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 10.5v5.8M14 10.5v5.8" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg></button>`:''}</div>`}
 function renderHome(){let list=loadSaved();$('savedHome').innerHTML=list.length?[...list].reverse().map((p,ri)=>routineHTML(p,list.length-1-ri)).join(''):`<p class="empty">Noch keine gespeicherten Atemübungen. Öffne die Einstellungen, um eine anzulegen.</p>`}
 function renderFields(){$('fields').innerHTML=['Einatmen','Halten','Ausatmen','Halten'].map((n,i)=>`<div class="row"><label>${n}</label><button class="step" onclick="setVal(${i},-1)">−</button><span class="value">${v[i]} sec</span><button class="step" onclick="setVal(${i},1)">+</button></div>`).join('');$('durationValue').textContent=customDuration+' min'}
 function setDuration(d){customDuration=Math.max(1,Math.min(60,customDuration+d));renderFields()}
@@ -150,12 +203,12 @@ function welcome(after){
   if(!('speechSynthesis' in window)){if(after)setTimeout(after,5000);return}
   speechSynthesis.cancel();
   const v=cachedVoice||pickGermanVoice();
-  const u1=new SpeechSynthesisUtterance('Hallo, Doogie.');u1.lang='de-DE';u1.rate=.78;u1.pitch=.98;u1.volume=voiceVolume;if(v)u1.voice=v;
+  const u1=new SpeechSynthesisUtterance(greeting()+', Doogie.');u1.lang='de-DE';u1.rate=.78;u1.pitch=.98;u1.volume=voiceVolume;if(v)u1.voice=v;
   u1.onend=()=>setTimeout(()=>{
-    const u2=new SpeechSynthesisUtterance('Vertrauen ist der Anfang von allem. Beginnen wir.');u2.lang='de-DE';u2.rate=.76;u2.pitch=.98;u2.volume=voiceVolume;if(v)u2.voice=v;
+    const u2=new SpeechSynthesisUtterance(dailyQuote());u2.lang='de-DE';u2.rate=.76;u2.pitch=.98;u2.volume=voiceVolume;if(v)u2.voice=v;
     u2.onend=()=>setTimeout(()=>{if(after)after()},5000);
     speechSynthesis.speak(u2);
-  },300);
+  },2500);
   speechSynthesis.speak(u1);
 }
 function chime(){try{let C=window.AudioContext||window.webkitAudioContext;if(!C)return;let c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.035,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.13);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.14)}catch(e){}}
@@ -183,7 +236,7 @@ function paint(){
   $('ph').textContent=x[0]==='INHALE'?'Einatmen':x[0]==='HOLD'?'Halten':'Ausatmen';
   $('co').textContent=String(s.n).padStart(2,'0');
   $('r').textContent=`NOCH ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;
-  $('orb').className='orb '+(x[2]?'big':'');
+  $('orb').className='orb';
 }
 function pause(){
   s.stop=!s.stop;
