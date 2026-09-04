@@ -187,7 +187,7 @@ html,body{overscroll-behavior:none}
 
 <section id="history" class="screen"><div class="header"><button class="back" onclick="show('profile')">‹</button><h2 class="serif">Verlauf</h2></div><div class="panel"><div class="sectionTitle" style="color:#8069a0"><span>Tage geöffnet</span></div><div id="historyList"></div></div></section>
 
-<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back sessionBack" onclick="quit()">‹&nbsp; Zurück</button></div><div class="sessionContent"><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div></div><span id="r" class="sessionRemaining" style="color:#806f91;font-size:13px;letter-spacing:3px;font-weight:750"></span><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Pause</button></section>
+<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back sessionBack" onclick="quit()">‹&nbsp; Zurück</button></div><div class="sessionContent"><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div></div><span id="r" class="sessionRemaining" style="color:#806f91;font-size:13px;letter-spacing:3px;font-weight:750"></span><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Pause</button><button id="abortSession" class="pause sessionAbort" onclick="abortSession()" aria-label="Übung abbrechen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.25 7.25h9.5l-.55 11.2a1.35 1.35 0 0 1-1.35 1.28H9.15a1.35 1.35 0 0 1-1.35-1.28L7.25 7.25Z" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/><path d="M5.75 7.25h12.5M9.25 4.75h5.5l.85 2.5H8.4l.85-2.5Z" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/><path d="m9.5 10 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg>&nbsp; Abbruch</button></section>
 
 <section id="done" class="screen done"><div class="check">✓</div><h1 class="serif" style="font-size:40px;color:#3e2d5e">Gut gemacht, Doogie.</h1><p class="sub" id="dg"></p><button class="primary" onclick="show('home')">Fertig</button></section>
 </main>
@@ -335,9 +335,10 @@ function paint(){
 }
 function pause(){
   s.stop=!s.stop;
-  if(s.stop){stopVoice();$('pa').innerHTML='▶&nbsp; Fortsetzen'}
-  else{$('pa').innerHTML='Ⅱ&nbsp; Pause';chime();speak(words[s.q[s.i][0]])}
+  if(s.stop){stopVoice();$('pa').innerHTML='▶&nbsp; Fortsetzen';$('abortSession').classList.add('on')}
+  else{$('pa').innerHTML='Ⅱ&nbsp; Pause';$('abortSession').classList.remove('on');chime();speak(words[s.q[s.i][0]])}
 }
+function abortSession(){clearInterval(t);stopVoice();s.stop=true;$('abortSession').classList.remove('on');$('pa').innerHTML='Ⅱ&nbsp; Pause';show('home')}
 function mod(x){$('modal').classList.toggle('on',!!x)}
 function quit(){clearInterval(t);stopVoice();mod(0);show('home')}
 function completionMessage(){let h=new Date().getHours();if(h>=5&&h<12)return 'Ich wünsche dir einen guten Morgen.';if(h>=12&&h<18)return 'Ich wünsche dir einen schönen Nachmittag.';if(h>=18&&h<22)return 'Ich wünsche dir einen schönen Abend.';return 'Ich wünsche dir eine gute Nacht.'}
@@ -345,7 +346,10 @@ function completionEnglish(){let h=new Date().getHours();if(h>=5&&h<12)return 'I
 function speakEnglish(text,onEnd){
   if(!('speechSynthesis' in window)){if(onEnd)onEnd();return}
   const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.78;u.pitch=.98;u.volume=voiceVolume;
-  const voices=speechSynthesis.getVoices();const v=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('en')&&v.localService)||voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('en'));if(v)u.voice=v;
+  const voices=speechSynthesis.getVoices();
+  const en=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('en'));
+  const female=en.find(v=>/siri|female|samantha|karen|victoria|moira|fiona|ava|allison|serena|zoe|kate/i.test(v.name))||en.find(v=>v.localService)||en[0]||null;
+  if(female)u.voice=female;
   if(onEnd)u.onend=onEnd;speechSynthesis.cancel();speechSynthesis.speak(u);
 }
 function finish(){clearInterval(t);const msg=completionMessage();const englishMsg=completionEnglish();show('done');$('dg').textContent=msg;speakEnglish('Well done, Doogie.',()=>setTimeout(()=>speakEnglish(englishMsg),2000))}
@@ -358,3 +362,13 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 </body></html>
+
+<style>
+/* v62: Abbruch-Button erscheint erst nach Pause und sitzt direkt darunter */
+.sessionAbort{
+  display:none!important;
+  bottom:calc(env(safe-area-inset-bottom) + 82px)!important;
+}
+.sessionAbort.on{display:flex!important;align-items:center;justify-content:center;}
+.sessionAbort svg{width:18px;height:18px;display:block;flex:0 0 auto;}
+</style>
