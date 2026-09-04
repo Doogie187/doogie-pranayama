@@ -116,7 +116,7 @@ html,body{overscroll-behavior:none}
 <style>
 /* v56: Restlaufzeit direkt über dem Pause-Button */
 .session #r{
-  position:absolute!important;
+  position:fixed!important;
   left:50%!important;
   right:auto!important;
   top:auto!important;
@@ -187,7 +187,7 @@ html,body{overscroll-behavior:none}
 
 <section id="history" class="screen"><div class="header"><button class="back" onclick="show('profile')">‹</button><h2 class="serif">Verlauf</h2></div><div class="panel"><div class="sectionTitle" style="color:#8069a0"><span>Tage geöffnet</span></div><div id="historyList"></div></div></section>
 
-<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back sessionBack" onclick="quit()">‹&nbsp; Zurück</button></div><div class="sessionContent"><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div><span id="r" class="sessionRemaining" style="color:#806f91;font-size:13px;letter-spacing:3px;font-weight:750"></span></div><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Pause</button></section>
+<section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back sessionBack" onclick="quit()">‹&nbsp; Zurück</button></div><div class="sessionContent"><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div></div><span id="r" class="sessionRemaining" style="color:#806f91;font-size:13px;letter-spacing:3px;font-weight:750"></span><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Pause</button></section>
 
 <section id="done" class="screen done"><div class="check">✓</div><h1 class="serif" style="font-size:40px;color:#3e2d5e">Gut gemacht, Doogie.</h1><p class="sub" id="dg"></p><button class="primary" onclick="show('home')">Fertig</button></section>
 </main>
