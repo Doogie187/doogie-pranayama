@@ -188,6 +188,35 @@ html,body{overscroll-behavior:none}
   z-index: 1;
 }
 
+
+/* Apple-style reflective edge — border only */
+.startBtn{
+  position:relative;
+  isolation:isolate;
+}
+.startBtn::after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:3;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.62),
+    inset 1px 0 0 rgba(255,255,255,.22),
+    inset -1px 0 0 rgba(255,255,255,.10),
+    inset 0 -1px 0 rgba(255,255,255,.08);
+  background:linear-gradient(
+    135deg,
+    rgba(255,255,255,.16) 0%,
+    rgba(255,255,255,.05) 20%,
+    rgba(255,255,255,0) 42%,
+    rgba(255,255,255,0) 76%,
+    rgba(255,255,255,.05) 100%
+  );
+}
+.startBtn > *{position:relative;z-index:4}
+
 </style>
 
 </head>
@@ -323,8 +352,8 @@ function setVal(i,d){v[i]=Math.max(i===4?1:0,Math.min(i===4?60:20,v[i]+d));rende
 function custom(){return ['Custom','Dein Atemrhythmus',...v,customDuration]}
 function renderPresets(){let list=loadSaved();$('presetList').innerHTML=list.length?list.map((p,i)=>routineHTML(p,i)).join(''):`<p class="empty">Noch keine gespeicherten Atemübungen.</p>`;renderFields()}
 function savePreset(){let name=$('presetName').value.trim();if(!name){$('presetName').focus();toast('Bitte einen Namen eingeben');return}let a=loadSaved();a.push({name,values:[...v],duration:customDuration});saveSaved(a);$('presetName').value='';renderPresets();renderHome();toast('Atemübung gespeichert')}
-function startSaved(i){if(i===-1){start(P[0]);return}if(i===-2){start(P[1]);return}let p=loadSaved()[i];if(p)start([p.name,'Gespeicherte Atemübung',...p.values,p.duration])}
-function startLatest(){let list=loadSaved();if(list.length){let p=list[list.length-1];start([p.name,'Gespeicherte Atemübung',...p.values,p.duration])}else{start(P[0])}}
+function startSaved(i){if(i===-1){localStorage.setItem('doogie_last_exercise',JSON.stringify(P[0]));start(P[0]);return}if(i===-2){localStorage.setItem('doogie_last_exercise',JSON.stringify(P[1]));start(P[1]);return}let p=loadSaved()[i];if(p){let x=[p.name,'Gespeicherte Atemübung',...p.values,p.duration];localStorage.setItem('doogie_last_exercise',JSON.stringify(x));start(x)}}
+function startLatest(){try{let last=JSON.parse(localStorage.getItem('doogie_last_exercise')||'null');if(last&&Array.isArray(last))return start(last)}catch(e){}let list=loadSaved();if(list.length){let p=list[list.length-1];start([p.name,'Gespeicherte Atemübung',...p.values,p.duration])}else{start(P[0])}}
 function deleteSaved(ev,i){ev.stopPropagation();let a=loadSaved();let name=a[i]?.name||'Breathing exercise';a.splice(i,1);saveSaved(a);renderHome();renderPresets();toast(name+' gelöscht')}
 function loadHistory(){try{return JSON.parse(localStorage.getItem('doogie_app_days')||'[]')}catch(e){return[]}}
 function saveHistory(a){localStorage.setItem('doogie_app_days',JSON.stringify(a))}
