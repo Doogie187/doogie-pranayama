@@ -341,7 +341,14 @@ function pause(){
 function mod(x){$('modal').classList.toggle('on',!!x)}
 function quit(){clearInterval(t);stopVoice();mod(0);show('home')}
 function completionMessage(){let h=new Date().getHours();if(h>=5&&h<12)return 'Ich wünsche dir einen guten Morgen.';if(h>=12&&h<18)return 'Ich wünsche dir einen schönen Nachmittag.';if(h>=18&&h<22)return 'Ich wünsche dir einen schönen Abend.';return 'Ich wünsche dir eine gute Nacht.'}
-function finish(){clearInterval(t);const msg=completionMessage();speak('Gut gemacht, Doogie. '+msg);$('dg').textContent=msg;show('done')}
+function completionEnglish(){let h=new Date().getHours();if(h>=5&&h<12)return 'I wish you a good morning.';if(h>=12&&h<18)return 'I wish you a pleasant afternoon.';if(h>=18&&h<22)return 'I wish you a pleasant evening.';return 'I wish you a good night.'}
+function speakEnglish(text,onEnd){
+  if(!('speechSynthesis' in window)){if(onEnd)onEnd();return}
+  const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.78;u.pitch=.98;u.volume=voiceVolume;
+  const voices=speechSynthesis.getVoices();const v=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('en')&&v.localService)||voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('en'));if(v)u.voice=v;
+  if(onEnd)u.onend=onEnd;speechSynthesis.cancel();speechSynthesis.speak(u);
+}
+function finish(){clearInterval(t);const msg=completionMessage();const englishMsg=completionEnglish();show('done');$('dg').textContent=msg;speakEnglish('Well done, Doogie.',()=>setTimeout(()=>speakEnglish(englishMsg),2000))}
 function toast(text){let e=$('toast');e.textContent=text;e.classList.add('on');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('on'),1800)}
 recordAppDay();renderHome();renderPresets();renderHistory();loadAudioSettings();
 </script></div>
