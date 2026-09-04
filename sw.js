@@ -1,5 +1,5 @@
-const CACHE = 'doogie-v20';
-const ASSETS = ['./','./index.html','./background.jpg','./manifest.webmanifest','./apple-touch-icon.png','./audio/hello.mp3','./audio/start.mp3','./audio/inhale.mp3','./audio/hold.mp3','./audio/exhale.mp3','./audio/done.mp3','./audio/morning.mp3','./audio/afternoon.mp3','./audio/evening.mp3','./audio/night.mp3'];
+const CACHE = 'doogie-v22';
+const ASSETS = ['./','./index.html','./background.jpg','./manifest.webmanifest','./apple-touch-icon.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
