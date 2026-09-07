@@ -282,7 +282,7 @@ html,body{overscroll-behavior:none}
 
 <aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Training beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Training beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
 <script>
-const P=[['9er Serie','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',5,10,5,10,15],['11er Serie','Ein ruhiger Vier-Phasen-Rhythmus.',5,11,5,11,15],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
+const P=[['10er Serie','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',5,10,5,10,15],['11er Serie','Ein ruhiger Vier-Phasen-Rhythmus.',5,11,5,11,15],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
 let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true;
 const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
 function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile')loadAudioSettings()}
