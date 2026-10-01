@@ -1,4 +1,4 @@
-const CACHE = 'doogie-v56';
+const CACHE = 'doogie-v25';
 const ASSETS = ['./','./index.html','./background.jpg','./manifest.webmanifest','./apple-touch-icon.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
