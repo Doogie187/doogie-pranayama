@@ -1,0 +1,9 @@
+{
+  "name": "doogie-pranayama",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Doogie Pranayama GitHub web app with native iOS audio mixing and screen wake support",
+  "scripts": {
+    "serve": "python3 -m http.server 8080 --directory www"
+  }
+}
