@@ -161,7 +161,7 @@ html,body{overscroll-behavior:none}
 <aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Training beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Training beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
 <script>
 const P=[['Box Breathing','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',4,4,4,4,3],['4–7–8','Ein längeres Ausatmen für innere Ruhe.',4,7,8,0,3],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
-let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true,wakeLock=null,sessionRunning=false;
+let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true;
 const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
 function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile')loadAudioSettings()}
 function greeting(){let h=new Date().getHours();return h<5?'Gute Nacht':h<10?'Guten Morgen':h<12?'Guten Vormittag':h<14?'Guten Mittag':h<18?'Guten Nachmittag':h<22?'Guten Abend':'Gute Nacht'}
@@ -238,90 +238,76 @@ function saveHistory(a){localStorage.setItem('doogie_app_days',JSON.stringify(a)
 function recordAppDay(){let d=new Date();let key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');let a=loadHistory();if(!a.includes(key)){a.push(key);a.sort().reverse();saveHistory(a)}}
 function formatHistoryDate(key){let p=key.split('-');let d=new Date(Number(p[0]),Number(p[1])-1,Number(p[2]));return d.toLocaleDateString('de-DE',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
 function renderHistory(){let a=loadHistory();$('historyList').innerHTML=a.length?a.map((d,i)=>`<div class="routine" style="margin-bottom:9px"><div class="icon">✓</div><div class="routineInfo"><b>${formatHistoryDate(d)}</b><span>${i===0?'Letzter App-Start':'App geöffnet'}</span></div></div>`).join(''):`<p class="empty">Noch kein App-Start aufgezeichnet.</p>`}
-// Audio: deliberately keep the older, proven Web Speech setup.
-// Important for iOS: do NOT await anything between the user's tap and speechSynthesis.speak().
-let cachedVoice=null,voiceVolume=.35;
+// German system voice via Web Speech API. Volume is independent in each utterance.
+let cachedVoice=null,voiceVolume=1;
 function pickGermanVoice(){
   if(!('speechSynthesis' in window))return null;
   const voices=speechSynthesis.getVoices();
-  const femaleDE=['Anna','Helena','Petra','Marlene'];
-  return voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('de')&&femaleDE.some(n=>v.name.toLowerCase().includes(n.toLowerCase())))||
-         voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('de'))||null;
+  const de=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('de'));
+  return de.find(v=>/siri|premium|enhanced|anna|helena|marlene/i.test(v.name))||de.find(v=>v.localService)||de[0]||null;
 }
 function refreshVoice(){cachedVoice=pickGermanVoice()}
 if('speechSynthesis' in window){speechSynthesis.addEventListener('voiceschanged',refreshVoice);refreshVoice()}
-function loadAudioSettings(){
-  const saved=localStorage.getItem('doogie_voice_volume');
-  voiceVolume=saved===null?.35:Number(saved);
-  if(!Number.isFinite(voiceVolume))voiceVolume=.35;
-  const el=$('voiceVolume'),out=$('voiceVolumeValue');
-  if(el)el.value=voiceVolume;if(out)out.textContent=Math.round(voiceVolume*100)+'%';
-}
-function setVoiceVolume(x){voiceVolume=Math.max(.05,Math.min(1,Number(x)));localStorage.setItem('doogie_voice_volume',String(voiceVolume));$('voiceVolumeValue').textContent=Math.round(voiceVolume*100)+'%'}
+function loadAudioSettings(){voiceVolume=Number(localStorage.getItem('doogie_voice_volume')??'1');if(!Number.isFinite(voiceVolume))voiceVolume=1;const el=$('voiceVolume');const out=$('voiceVolumeValue');if(el)el.value=voiceVolume;if(out)out.textContent=Math.round(voiceVolume*100)+'%'}
+function setVoiceVolume(x){voiceVolume=Math.max(0,Math.min(1,Number(x)));localStorage.setItem('doogie_voice_volume',String(voiceVolume));$('voiceVolumeValue').textContent=Math.round(voiceVolume*100)+'%'}
 loadAudioSettings();
 function stopVoice(){if('speechSynthesis' in window)speechSynthesis.cancel()}
 function speak(text,onEnd){
   if(!('speechSynthesis' in window)){if(onEnd)onEnd();return}
-  try{speechSynthesis.cancel();speechSynthesis.resume()}catch(e){}
   const u=new SpeechSynthesisUtterance(text);
-  u.lang=cachedVoice?cachedVoice.lang:'de-DE';
-  u.rate=text==='Halten'?.66:.56;
-  u.pitch=1.08;
-  u.volume=voiceVolume;
-  if(cachedVoice)u.voice=cachedVoice;
+  u.lang='de-DE';u.rate=text==='Halten'?.70:.78;u.pitch=.98;u.volume=voiceVolume;
+  const v=cachedVoice||pickGermanVoice();if(v)u.voice=v;
   if(onEnd)u.onend=onEnd;
-  speechSynthesis.speak(u);
+  speechSynthesis.cancel();speechSynthesis.speak(u);
 }
 function welcome(after){
-  if(!('speechSynthesis' in window)){if(after)after();return}
-  try{speechSynthesis.cancel();speechSynthesis.resume()}catch(e){}
-  const u=new SpeechSynthesisUtterance(greeting()+', Doogie.');
-  u.lang=cachedVoice?cachedVoice.lang:'de-DE';u.rate=.68;u.pitch=1.08;u.volume=voiceVolume;
-  if(cachedVoice)u.voice=cachedVoice;
-  u.onend=()=>{if(after)after()};
-  speechSynthesis.speak(u);
+  if(!('speechSynthesis' in window)){if(after)setTimeout(after,5000);return}
+  speechSynthesis.cancel();
+  const v=cachedVoice||pickGermanVoice();
+  const u1=new SpeechSynthesisUtterance(greeting()+', Doogie.');u1.lang='de-DE';u1.rate=.78;u1.pitch=.98;u1.volume=voiceVolume;if(v)u1.voice=v;
+  u1.onend=()=>setTimeout(()=>{
+    const u2=new SpeechSynthesisUtterance(dailyQuote());u2.lang='de-DE';u2.rate=.76;u2.pitch=.98;u2.volume=voiceVolume;if(v)u2.voice=v;
+    u2.onend=()=>setTimeout(()=>{if(after)after()},5000);
+    speechSynthesis.speak(u2);
+  },2500);
+  speechSynthesis.speak(u1);
 }
-sessionRunning=false;
-async function requestWakeLock(){
-  if(!('wakeLock' in navigator)||document.visibilityState!=='visible'||!sessionRunning)return;
-  try{
-    if(wakeLock)return;
-    wakeLock=await navigator.wakeLock.request('screen');
-    wakeLock.addEventListener('release',()=>{wakeLock=null},{once:true});
-  }catch(e){console.warn('Screen Wake Lock:',e)}
-}
-async function releaseWakeLock(){if(!wakeLock)return;try{await wakeLock.release()}catch(e){}wakeLock=null}
-document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible'&&sessionRunning&&!s?.stop){requestWakeLock();try{speechSynthesis.resume()}catch(e){}}
-});
-window.addEventListener('pagehide',()=>{releaseWakeLock()});
-
-async function start(p){
-  clearInterval(t);stopVoice();
+function chime(){try{let C=window.AudioContext||window.webkitAudioContext;if(!C)return;let c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.035,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.13);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.14)}catch(e){}}
+function start(p){
+  clearInterval(t);
+  stopVoice();
   const q=[['INHALE',p[2],1],['HOLD',p[3],1],['EXHALE',p[4],0],['HOLD',p[5],0]].filter(x=>x[1]);
-  if(!q.length)return;
   s={p,q,i:0,n:q[0][1],round:1,completed:0,e:0,total:(p[7]||p[6])*60,stop:0};
-  sessionRunning=true;
-  show('session');paint();
-  // Fire-and-forget: wake lock must never block speech after the user's tap.
-  requestWakeLock();
-  const begin=()=>{speak(words.INHALE);t=setInterval(tick,1000)};
+  show('session');
+  paint();
+  const begin=()=>{chime();speak(words.INHALE);t=setInterval(tick,1000)};
   if(firstExercisePending){firstExercisePending=false;welcome(begin)}else begin();
 }
 function tick(){
-  if(s.stop)return;s.e++;
+  if(s.stop)return;
+  s.e++;
   if(s.e>=s.total){finish();return}
   if(s.n>1)s.n--;
-  else if(s.i<s.q.length-1){s.i++;s.n=s.q[s.i][1];speak(words[s.q[s.i][0]])}
-  else{s.completed++;s.round++;s.i=0;s.n=s.q[0][1];speak(words[s.q[0][0]])}
+  else if(s.i<s.q.length-1){s.i++;s.n=s.q[s.i][1];chime();speak(words[s.q[s.i][0]])}
+  else{s.completed++;s.round++;s.i=0;s.n=s.q[0][1];chime();speak(words[s.q[0][0]])}
   paint();
 }
-function paint(){const x=s.q[s.i],left=Math.max(0,s.total-s.e);$('ph').textContent=x[0]==='INHALE'?'Einatmen':x[0]==='HOLD'?'Halten':'Ausatmen';$('co').textContent=String(s.n).padStart(2,'0');$('r').textContent=`NOCH ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;$('orb').className='orb'}
-async function pause(){s.stop=!s.stop;if(s.stop){stopVoice();releaseWakeLock();$('pa').innerHTML='▶&nbsp; Fortsetzen'}else{$('pa').innerHTML='Ⅱ&nbsp; Pause';requestWakeLock();speak(words[s.q[s.i][0]])}}
+function paint(){
+  const x=s.q[s.i],left=Math.max(0,s.total-s.e);
+  $('ph').textContent=x[0]==='INHALE'?'Einatmen':x[0]==='HOLD'?'Halten':'Ausatmen';
+  $('co').textContent=String(s.n).padStart(2,'0');
+  $('r').textContent=`NOCH ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;
+  $('orb').className='orb';
+}
+function pause(){
+  s.stop=!s.stop;
+  if(s.stop){stopVoice();$('pa').innerHTML='▶&nbsp; Fortsetzen'}
+  else{$('pa').innerHTML='Ⅱ&nbsp; Pause';chime();speak(words[s.q[s.i][0]])}
+}
 function mod(x){$('modal').classList.toggle('on',!!x)}
-function quit(){sessionRunning=false;clearInterval(t);stopVoice();releaseWakeLock();mod(0);show('home')}
+function quit(){clearInterval(t);stopVoice();mod(0);show('home')}
 function completionMessage(){let h=new Date().getHours();if(h>=5&&h<12)return 'Ich wünsche dir einen guten Morgen.';if(h>=12&&h<18)return 'Ich wünsche dir einen schönen Nachmittag.';if(h>=18&&h<22)return 'Ich wünsche dir einen schönen Abend.';return 'Ich wünsche dir eine gute Nacht.'}
-function finish(){sessionRunning=false;clearInterval(t);releaseWakeLock();const msg=completionMessage();speak('Gut gemacht, Doogie. '+msg);$('dg').textContent=msg;$('dc').textContent=`Du hast ${s.p[0]} erfolgreich abgeschlossen.`;$('dr').textContent=s.completed;$('dt').textContent=`${Math.floor(s.total/60)}:${String(s.total%60).padStart(2,'0')}`;$('dn').textContent=s.p[0];show('done')}
+function finish(){clearInterval(t);const msg=completionMessage();speak('Gut gemacht, Doogie. '+msg);$('dg').textContent=msg;$('dc').textContent=`Du hast ${s.p[0]} erfolgreich abgeschlossen.`;$('dr').textContent=s.completed;$('dt').textContent=`${Math.floor(s.total/60)}:${String(s.total%60).padStart(2,'0')}`;$('dn').textContent=s.p[0];show('done')}
 function toast(text){let e=$('toast');e.textContent=text;e.classList.add('on');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('on'),1800)}
 recordAppDay();renderHome();renderPresets();renderHistory();loadAudioSettings();
 </script></div>
