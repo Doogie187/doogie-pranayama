@@ -283,7 +283,7 @@ html,body{overscroll-behavior:none}
 <aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Training beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Training beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
 <script>
 const P=[['9er Serie','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',4,9,4,9,15],['11er Serie','Ein ruhiger Vier-Phasen-Rhythmus.',4,11,4,11,15],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
-let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=false;
+let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true;
 let wakeLock=null,sessionRunning=false,audioCtx=null;
 const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
 
@@ -408,26 +408,36 @@ function loadAudioSettings(){voiceVolume=Number(localStorage.getItem('doogie_voi
 function setVoiceVolume(x){voiceVolume=Math.max(0,Math.min(1,Number(x)));localStorage.setItem('doogie_voice_volume',String(voiceVolume));$('voiceVolumeValue').textContent=Math.round(voiceVolume*100)+'%'}
 loadAudioSettings();
 function stopVoice(){if('speechSynthesis' in window)speechSynthesis.cancel()}
+function speechReady(){
+  if(!('speechSynthesis' in window))return false;
+  try{speechSynthesis.resume()}catch(e){}
+  return true;
+}
 function speak(text,onEnd){
-  if(!('speechSynthesis' in window)){if(onEnd)onEnd();return}
+  if(!speechReady()){if(onEnd)onEnd();return}
   configureAudioSession();
   const u=new SpeechSynthesisUtterance(text);
-  u.lang='de-DE';u.rate=text==='Halten'?.70:.78;u.pitch=.98;u.volume=voiceVolume;
+  u.lang='de-DE';u.rate=text==='Halten'?.70:.78;u.pitch=.98;u.volume=Math.max(.01,voiceVolume);
   const v=cachedVoice||pickGermanVoice();if(v)u.voice=v;
   if(onEnd)u.onend=onEnd;
-  speechSynthesis.cancel();speechSynthesis.speak(u);
+  u.onerror=()=>{try{speechSynthesis.resume()}catch(e){};if(onEnd)onEnd()};
+  speechSynthesis.cancel();
+  try{speechSynthesis.resume()}catch(e){}
+  speechSynthesis.speak(u);
+  setTimeout(()=>{try{speechSynthesis.resume()}catch(e){}},80);
 }
 function welcome(after){
-  if(!('speechSynthesis' in window)){if(after)setTimeout(after,5000);return}
+  if(!speechReady()){if(after)after();return}
+  configureAudioSession();
+  const u=new SpeechSynthesisUtterance(greeting()+', Doogie.');
+  u.lang='de-DE';u.rate=.78;u.pitch=.98;u.volume=Math.max(.01,voiceVolume);
+  const v=cachedVoice||pickGermanVoice();if(v)u.voice=v;
+  u.onend=()=>{if(after)after()};
+  u.onerror=()=>{if(after)after()};
   speechSynthesis.cancel();
-  const v=cachedVoice||pickGermanVoice();
-  const u1=new SpeechSynthesisUtterance(greeting()+', Doogie.');u1.lang='de-DE';u1.rate=.78;u1.pitch=.98;u1.volume=voiceVolume;if(v)u1.voice=v;
-  u1.onend=()=>setTimeout(()=>{
-    const u2=new SpeechSynthesisUtterance(dailyQuote());u2.lang='de-DE';u2.rate=.76;u2.pitch=.98;u2.volume=voiceVolume;if(v)u2.voice=v;
-    u2.onend=()=>setTimeout(()=>{if(after)after()},5000);
-    speechSynthesis.speak(u2);
-  },2500);
-  speechSynthesis.speak(u1);
+  try{speechSynthesis.resume()}catch(e){}
+  speechSynthesis.speak(u);
+  setTimeout(()=>{try{speechSynthesis.resume()}catch(e){}},80);
 }
 function chime(){try{let C=window.AudioContext||window.webkitAudioContext;if(!C)return;if(!audioCtx)audioCtx=new C();if(audioCtx.state==='suspended')audioCtx.resume();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.035,audioCtx.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.13);o.connect(g).connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.14)}catch(e){}}
 async function start(p){
@@ -441,7 +451,12 @@ async function start(p){
   sessionRunning=true;
   await requestWakeLock();
   const begin=()=>{chime();speak(words.INHALE);t=setInterval(tick,1000)};
-  begin();
+  if(firstExercisePending){
+    firstExercisePending=false;
+    welcome(begin);
+  }else{
+    begin();
+  }
 }
 function tick(){
   if(s.stop)return;
