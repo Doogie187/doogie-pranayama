@@ -216,6 +216,9 @@ html,body{overscroll-behavior:none}
   );
 }
 .startBtn > *{position:relative;z-index:4}
+.ver{margin:10px 0 0;color:#fff;font-size:13px;font-weight:600;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.45)}
+/* Orb wird per JS an die Atemphasen gekoppelt */
+.orb{animation:none!important;transform:scale(.86)}
 
 </style>
 
@@ -223,7 +226,7 @@ html,body{overscroll-behavior:none}
 <body>
 <div class="app"><div class="bg"></div><main class="content">
 <section id="home" class="screen on">
-  <div class="topline"><div><p class="eyebrow" id="greeting">Guten Morgen</p><div class="heroCopy"><h1 class="serif">Doogie</h1><p class="tagline">Vertrauen ist der Anfang von allem.</p></div></div></div>
+  <div class="topline"><div><p class="eyebrow" id="greeting">Guten Morgen</p><div class="heroCopy"><h1 class="serif">Doogie</h1><p class="tagline">Vertrauen ist der Anfang von allem.</p><p id="ver" class="ver"></p></div></div></div>
   <div class="startWrap"><button class="startBtn" onclick="startLatest()"><div class="lotus" aria-hidden="true">
 <svg viewBox="0 0 100 100" role="img" aria-label="Lebensblume">
   <g transform="translate(50 50) scale(.76) translate(-50 -50)" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -277,13 +280,15 @@ html,body{overscroll-behavior:none}
 
 <section id="session" class="screen session"><div class="sessionBg"></div><div class="topline"><button class="back sessionBack" onclick="quit()">‹&nbsp; Zurück</button></div><div class="sessionContent"><div class="phase" id="ph"></div><div class="count" id="co"></div><div class="orbBox"><div id="orb" class="orb"></div></div></div><span id="r" class="sessionRemaining" style="color:#806f91;font-size:13px;letter-spacing:3px;font-weight:750"></span><button id="pa" class="pause" onclick="pause()">Ⅱ&nbsp; Pause</button></section>
 
-<section id="done" class="screen done"><div class="check">✓</div><h1 class="serif" style="font-size:40px;color:#3e2d5e">Gut gemacht, Doogie.</h1><p class="sub" id="dg"></p><button class="primary" onclick="show('home')">Fertig</button></section>
+<section id="done" class="screen done"><div class="check">✓</div><h1 class="serif" style="font-size:40px;color:#3e2d5e">Gut gemacht, Doogie.</h1><p class="sub" id="dg"></p><button class="primary" onclick="closeDone()">Fertig</button></section>
 </main>
 
 <aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Training beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Training beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
 <script>
+const APP_VERSION='v60 · 10.10.2026';
+const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,x)=>{try{localStorage.setItem(k,x)}catch(e){}}};
 const P=[['10er Serie','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',5,10,5,10,15],['11er Serie','Ein ruhiger Vier-Phasen-Rhythmus.',5,11,5,11,15],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
-let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true,wakeLock=null;
+let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true,wakeLock=null,sid=0;
 const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
 function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile')loadAudioSettings()}
 function greeting(){let h=new Date().getHours();return h<5?'Gute Nacht':h<10?'Guten Morgen':h<12?'Guten Vormittag':h<14?'Guten Mittag':h<18?'Guten Nachmittag':h<22?'Guten Abend':'Gute Nacht'}
@@ -340,23 +345,23 @@ const DAILY_QUOTES=[
 'Vielleicht ist die wichtigste Frage: Was ist wirklich wichtig?'
 ];
 function dailyQuote(){let d=new Date();let key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))>>>0;return DAILY_QUOTES[hash%DAILY_QUOTES.length]}
-$('greeting').textContent=greeting();
-function loadSaved(){try{return JSON.parse(localStorage.getItem('doogie_saved_exercises')||'[]')}catch(e){return[]}}
-function saveSaved(a){localStorage.setItem('doogie_saved_exercises',JSON.stringify(a))}
+$('greeting').textContent=greeting();$('ver').textContent='Version '+APP_VERSION;
+function loadSaved(){try{return JSON.parse(store.get('doogie_saved_exercises')||'[]')}catch(e){return[]}}
+function saveSaved(a){store.set('doogie_saved_exercises',JSON.stringify(a))}
 function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function routineHTML(p,i,allowDelete=true){let detail=`${p.duration||10} min · ${p.values[0]}–${p.values[1]}–${p.values[2]}–${p.values[3]} sec`;return `<div class="routine"><div class="routineInfo" onclick="startSaved(${i})"><b>${escapeHtml(p.name)}</b><span>${detail}</span></div><button class="dots" onclick="startSaved(${i})">›</button>${allowDelete?`<button class="trash" onclick="deleteSaved(event,${i})" aria-label="Atemübung löschen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.25 7.25h9.5l-.55 11.2a1.35 1.35 0 0 1-1.35 1.28H9.15a1.35 1.35 0 0 1-1.35-1.28L7.25 7.25Z" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/><path d="M5.75 7.25h12.5M9.25 4.75h5.5l.85 2.5H8.4l.85-2.5Z" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 10.5v5.8M14 10.5v5.8" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg></button>`:''}</div>`}
 function renderHome(){let list=loadSaved();let presets=P.slice(0,2).map((x)=>({name:x[0],values:[x[2],x[3],x[4],x[5]],duration:x[6]}));let saved=[...list].reverse().map((p,ri)=>routineHTML(p,list.length-1-ri)).join('');$('savedHome').innerHTML=presets.map((p,i)=>routineHTML(p,-(i+1),false)).join('')+saved}
 function renderFields(){$('fields').innerHTML=['Einatmen','Halten','Ausatmen','Halten'].map((n,i)=>`<div class="row"><label>${n}</label><button class="step" onclick="setVal(${i},-1)">−</button><span class="value">${v[i]} sec</span><button class="step" onclick="setVal(${i},1)">+</button></div>`).join('');$('durationValue').textContent=customDuration+' min'}
 function setDuration(d){customDuration=Math.max(1,Math.min(60,customDuration+d));renderFields()}
-function setVal(i,d){v[i]=Math.max(i===4?1:0,Math.min(i===4?60:20,v[i]+d));renderFields()}
+function setVal(i,d){const min=(i===0||i===2)?1:0;v[i]=Math.max(min,Math.min(20,v[i]+d));renderFields()}
 function custom(){return ['Custom','Dein Atemrhythmus',...v,customDuration]}
 function renderPresets(){let list=loadSaved();$('presetList').innerHTML=list.length?list.map((p,i)=>routineHTML(p,i)).join(''):`<p class="empty">Noch keine gespeicherten Atemübungen.</p>`;renderFields()}
 function savePreset(){let name=$('presetName').value.trim();if(!name){$('presetName').focus();toast('Bitte einen Namen eingeben');return}let a=loadSaved();a.push({name,values:[...v],duration:customDuration});saveSaved(a);$('presetName').value='';renderPresets();renderHome();toast('Atemübung gespeichert')}
-function startSaved(i){if(i===-1){localStorage.setItem('doogie_last_exercise',JSON.stringify(P[0]));start(P[0]);return}if(i===-2){localStorage.setItem('doogie_last_exercise',JSON.stringify(P[1]));start(P[1]);return}let p=loadSaved()[i];if(p){let x=[p.name,'Gespeicherte Atemübung',...p.values,p.duration];localStorage.setItem('doogie_last_exercise',JSON.stringify(x));start(x)}}
-function startLatest(){try{let last=JSON.parse(localStorage.getItem('doogie_last_exercise')||'null');if(last&&Array.isArray(last))return start(last)}catch(e){}let list=loadSaved();if(list.length){let p=list[list.length-1];start([p.name,'Gespeicherte Atemübung',...p.values,p.duration])}else{start(P[0])}}
-function deleteSaved(ev,i){ev.stopPropagation();let a=loadSaved();let name=a[i]?.name||'Breathing exercise';a.splice(i,1);saveSaved(a);renderHome();renderPresets();toast(name+' gelöscht')}
-function loadHistory(){try{return JSON.parse(localStorage.getItem('doogie_app_days')||'[]')}catch(e){return[]}}
-function saveHistory(a){localStorage.setItem('doogie_app_days',JSON.stringify(a))}
+function startSaved(i){if(i===-1){store.set('doogie_last_exercise',JSON.stringify(P[0]));start(P[0]);return}if(i===-2){store.set('doogie_last_exercise',JSON.stringify(P[1]));start(P[1]);return}let p=loadSaved()[i];if(p){let x=[p.name,'Gespeicherte Atemübung',...p.values,p.duration||10];store.set('doogie_last_exercise',JSON.stringify(x));start(x)}}
+function startLatest(){try{let last=JSON.parse(store.get('doogie_last_exercise')||'null');if(last&&Array.isArray(last))return start(last)}catch(e){}let list=loadSaved();if(list.length){let p=list[list.length-1];start([p.name,'Gespeicherte Atemübung',...p.values,p.duration||10])}else{start(P[0])}}
+function deleteSaved(ev,i){ev.stopPropagation();let a=loadSaved();let name=a[i]?.name||'Atemübung';a.splice(i,1);saveSaved(a);renderHome();renderPresets();toast(name+' gelöscht')}
+function loadHistory(){try{return JSON.parse(store.get('doogie_app_days')||'[]')}catch(e){return[]}}
+function saveHistory(a){store.set('doogie_app_days',JSON.stringify(a))}
 function recordAppDay(){let d=new Date();let key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');let a=loadHistory();if(!a.includes(key)){a.push(key);a.sort().reverse();saveHistory(a)}}
 function formatHistoryDate(key){let p=key.split('-');let d=new Date(Number(p[0]),Number(p[1])-1,Number(p[2]));return d.toLocaleDateString('de-DE',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
 function renderHistory(){let a=loadHistory();$('historyList').innerHTML=a.length?a.map((d,i)=>`<div class="routine" style="margin-bottom:9px"><div class="icon">✓</div><div class="routineInfo"><b>${formatHistoryDate(d)}</b><span>${i===0?'Letzter App-Start':'App geöffnet'}</span></div></div>`).join(''):`<p class="empty">Noch kein App-Start aufgezeichnet.</p>`}
@@ -370,8 +375,8 @@ function pickGermanVoice(){
 }
 function refreshVoice(){cachedVoice=pickGermanVoice()}
 if('speechSynthesis' in window){speechSynthesis.addEventListener('voiceschanged',refreshVoice);refreshVoice()}
-function loadAudioSettings(){voiceVolume=Number(localStorage.getItem('doogie_voice_volume')??'1');if(!Number.isFinite(voiceVolume))voiceVolume=1;const el=$('voiceVolume');const out=$('voiceVolumeValue');if(el)el.value=voiceVolume;if(out)out.textContent=Math.round(voiceVolume*100)+'%'}
-function setVoiceVolume(x){voiceVolume=Math.max(0,Math.min(1,Number(x)));localStorage.setItem('doogie_voice_volume',String(voiceVolume));$('voiceVolumeValue').textContent=Math.round(voiceVolume*100)+'%'}
+function loadAudioSettings(){voiceVolume=Number(store.get('doogie_voice_volume')??'1');if(!Number.isFinite(voiceVolume))voiceVolume=1;const el=$('voiceVolume');const out=$('voiceVolumeValue');if(el)el.value=voiceVolume;if(out)out.textContent=Math.round(voiceVolume*100)+'%'}
+function setVoiceVolume(x){voiceVolume=Math.max(0,Math.min(1,Number(x)));store.set('doogie_voice_volume',String(voiceVolume));$('voiceVolumeValue').textContent=Math.round(voiceVolume*100)+'%'}
 loadAudioSettings();
 function stopVoice(){if('speechSynthesis' in window)speechSynthesis.cancel()}
 function speak(text,onEnd){
@@ -382,49 +387,76 @@ function speak(text,onEnd){
   if(onEnd)u.onend=onEnd;
   speechSynthesis.cancel();speechSynthesis.speak(u);
 }
-function welcome(after){
-  if(!('speechSynthesis' in window)){if(after)setTimeout(after,5000);return}
+function welcome(after,id){
+  const alive=()=>id===sid;
+  if(!('speechSynthesis' in window)){setTimeout(()=>{if(alive())after()},5000);return}
   speechSynthesis.cancel();
-  const v=cachedVoice||pickGermanVoice();
-  const u1=new SpeechSynthesisUtterance(greeting()+', Doogie.');u1.lang='de-DE';u1.rate=.65;u1.pitch=.86;u1.volume=voiceVolume;if(v)u1.voice=v;
-  u1.onend=()=>setTimeout(()=>{
-    const u2=new SpeechSynthesisUtterance(dailyQuote());u2.lang='de-DE';u2.rate=.63;u2.pitch=.86;u2.volume=voiceVolume;if(v)u2.voice=v;
-    u2.onend=()=>setTimeout(()=>{if(after)after()},5000);
+  const vo=cachedVoice||pickGermanVoice();
+  const u1=new SpeechSynthesisUtterance(greeting()+', Doogie.');u1.lang='de-DE';u1.rate=.65;u1.pitch=.86;u1.volume=voiceVolume;if(vo)u1.voice=vo;
+  const next=()=>setTimeout(()=>{
+    if(!alive())return;
+    const u2=new SpeechSynthesisUtterance(dailyQuote());u2.lang='de-DE';u2.rate=.63;u2.pitch=.86;u2.volume=voiceVolume;if(vo)u2.voice=vo;
+    const go=()=>setTimeout(()=>{if(alive())after()},5000);
+    u2.onend=u2.onerror=go;
     speechSynthesis.speak(u2);
   },2500);
+  u1.onend=u1.onerror=next;
   speechSynthesis.speak(u1);
 }
-function chime(){try{let C=window.AudioContext||window.webkitAudioContext;if(!C)return;let c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.035,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.13);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.14)}catch(e){}}
+function chime(){try{let C=window.AudioContext||window.webkitAudioContext;if(!C)return;let c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.035,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.13);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.14);setTimeout(()=>{try{c.close()}catch(e){}},500)}catch(e){}}
 
 async function keepScreenAwake(){
   try{
-    if('wakeLock' in navigator && document.visibilityState==='visible') wakeLock=await navigator.wakeLock.request('screen');
+    if(!('wakeLock' in navigator)||document.visibilityState!=='visible'||wakeLock)return;
+    const l=await navigator.wakeLock.request('screen');
+    if(!s){l.release().catch(()=>{});return} // Training war inzwischen beendet
+    wakeLock=l;
+    l.addEventListener('release',()=>{if(wakeLock===l)wakeLock=null});
   }catch(e){}
 }
-function releaseScreenAwake(){
-  try{if(wakeLock){wakeLock.release();wakeLock=null}}catch(e){wakeLock=null}
-}
+function releaseScreenAwake(){const l=wakeLock;wakeLock=null;try{if(l)l.release().catch(()=>{})}catch(e){}}
+function refreshDay(){$('greeting').textContent=greeting();recordAppDay();if($('history').classList.contains('on'))renderHistory()}
 document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible' && s && !s.stop) keepScreenAwake();
+  if(document.visibilityState!=='visible')return;
+  if(s)keepScreenAwake(); // das System gibt den Lock im Hintergrund frei -> neu anfordern, nur während eines Trainings
+  refreshDay();
 });
+function orbReset(){const o=$('orb');o.style.transition='none';o.style.transform='scale(.86)';void o.offsetWidth}
+function orbPhase(sec){
+  if(!s)return;
+  const o=$('orb'),k=s.q[s.i][0];
+  if(k==='HOLD')return; // beim Halten bleibt der Orb stehen
+  o.style.transition='transform '+sec+'s ease-in-out';
+  o.style.transform=k==='INHALE'?'scale(1.14)':'scale(.86)';
+}
 function start(p){
   clearInterval(t);
-  keepScreenAwake();
+  const id=++sid;
+  const q=[['INHALE',p[2],1],['HOLD',p[3],1],['EXHALE',p[4],0],['HOLD',p[5],0]].map(x=>[x[0],Number(x[1])||0,x[2]]).filter(x=>x[1]>0);
+  if(!q.length){toast('Mindestens eine Atemphase muss größer als 0 sein');return}
   stopVoice();
-  const q=[['INHALE',p[2],1],['HOLD',p[3],1],['EXHALE',p[4],0],['HOLD',p[5],0]].filter(x=>x[1]);
-  s={p,q,i:0,n:q[0][1],round:1,completed:0,e:0,total:(p[7]||p[6])*60,stop:0};
+  $('pa').innerHTML='Ⅱ&nbsp; Pause';
+  s={p,q,i:0,n:q[0][1],round:1,completed:0,e:0,total:((Number(p[7])||Number(p[6]))||10)*60,stop:0,started:false};
+  keepScreenAwake();
   show('session');
+  orbReset();
   paint();
-  const begin=()=>{chime();speak(words.INHALE);t=setInterval(tick,1000)};
-  welcome(begin);
+  const begin=()=>{
+    if(id!==sid||!s||s.started)return;
+    s.started=true;clearInterval(t);
+    chime();speak(words[q[0][0]]);orbPhase(q[0][1]);
+    t=setInterval(tick,1000);
+  };
+  welcome(begin,id);
+  setTimeout(begin,30000); // Sicherheitsnetz, falls die Sprachausgabe nie 'onend' meldet
 }
 function tick(){
   if(s.stop)return;
   s.e++;
   if(s.e>=s.total){finish();return}
   if(s.n>1)s.n--;
-  else if(s.i<s.q.length-1){s.i++;s.n=s.q[s.i][1];chime();speak(words[s.q[s.i][0]])}
-  else{s.completed++;s.round++;s.i=0;s.n=s.q[0][1];chime();speak(words[s.q[0][0]])}
+  else if(s.i<s.q.length-1){s.i++;s.n=s.q[s.i][1];chime();speak(words[s.q[s.i][0]]);orbPhase(s.n)}
+  else{s.completed++;s.round++;s.i=0;s.n=s.q[0][1];chime();speak(words[s.q[0][0]]);orbPhase(s.n)}
   paint();
 }
 function paint(){
@@ -435,14 +467,22 @@ function paint(){
   $('orb').className='orb';
 }
 function pause(){
+  if(!s||!s.started)return; // erst nach der Begrüßung möglich
   s.stop=!s.stop;
-  if(s.stop){stopVoice();$('pa').innerHTML='▶&nbsp; Fortsetzen'}
-  else{$('pa').innerHTML='Ⅱ&nbsp; Pause';chime();speak(words[s.q[s.i][0]])}
+  const o=$('orb');
+  if(s.stop){
+    stopVoice();
+    const m=getComputedStyle(o).transform;o.style.transition='none';o.style.transform=m; // Orb einfrieren
+    $('pa').innerHTML='▶&nbsp; Fortsetzen';
+  }else{
+    $('pa').innerHTML='Ⅱ&nbsp; Pause';
+    void o.offsetWidth;orbPhase(s.n);
+    chime();speak(words[s.q[s.i][0]]);
+  }
 }
 function mod(x){$('modal').classList.toggle('on',!!x)}
-function quit(){clearInterval(t);stopVoice();releaseScreenAwake();mod(0);show('home')}
-function completionMessage(){let h=new Date().getHours();if(h>=5&&h<12)return 'Ich wünsche dir einen guten Morgen.';if(h>=12&&h<18)return 'Ich wünsche dir einen schönen Nachmittag.';if(h>=18&&h<22)return 'Ich wünsche dir einen schönen Abend.';return 'Ich wünsche dir eine gute Nacht.'}
-function completionEnglish(){let h=new Date().getHours();if(h>=5&&h<12)return 'I wish you a good morning.';if(h>=12&&h<18)return 'I wish you a pleasant afternoon.';if(h>=18&&h<22)return 'I wish you a pleasant evening.';return 'I wish you a good night.'}
+function quit(){sid++;clearInterval(t);stopVoice();releaseScreenAwake();s=null;mod(0);show('home')}
+function closeDone(){sid++;stopVoice();show('home')}
 function speakEnglish(text,onEnd){
   if(!('speechSynthesis' in window)){if(onEnd)onEnd();return}
   const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.78;u.pitch=.98;u.volume=voiceVolume;
@@ -450,9 +490,14 @@ function speakEnglish(text,onEnd){
   const en=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('en'));
   const female=en.find(v=>/siri|female|samantha|karen|victoria|moira|fiona|ava|allison|serena|zoe|kate/i.test(v.name))||en.find(v=>v.localService)||en[0]||null;
   if(female)u.voice=female;
-  if(onEnd)u.onend=onEnd;speechSynthesis.cancel();speechSynthesis.speak(u);
+  if(onEnd)u.onend=u.onerror=onEnd;speechSynthesis.cancel();speechSynthesis.speak(u);
 }
-function finish(){clearInterval(t);releaseScreenAwake();const msg=completionMessage();show('done');$('dg').textContent='Ich wünsche dir einen entspannten Tag.';speakEnglish('Well done, Doogie.',()=>setTimeout(()=>speak('Ich wünsche dir einen entspannten Tag.'),2500))}
+function finish(){
+  clearInterval(t);releaseScreenAwake();s=null;
+  const id=++sid;
+  show('done');$('dg').textContent='Ich wünsche dir einen entspannten Tag.';
+  speakEnglish('Well done, Doogie.',()=>setTimeout(()=>{if(id===sid)speak('Ich wünsche dir einen entspannten Tag.')},2500));
+}
 function toast(text){let e=$('toast');e.textContent=text;e.classList.add('on');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('on'),1800)}
 recordAppDay();renderHome();renderPresets();renderHistory();loadAudioSettings();
 </script></div>
