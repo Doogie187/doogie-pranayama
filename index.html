@@ -266,6 +266,8 @@ html,body{overscroll-behavior:none}
     <div class="row"><label>Musik</label><span class="value" style="width:auto">Keine Absenkung durch die App</span></div>
     <div class="row"><label>Ansagen</label><button id="modeBtn" class="step" style="width:auto;padding:0 16px;font-weight:650" onclick="toggleAudioMode()"></button></div>
     <p id="modeNote" style="color:#6f5f84;font-size:13px;line-height:1.45;margin:4px 3px 12px"></p>
+    <div class="row"><label>Musik mischen</label><button id="mixBtn" class="step" style="width:auto;padding:0 16px;font-weight:650" onclick="toggleMix()"></button></div>
+    <p id="mixNote" style="color:#6f5f84;font-size:13px;line-height:1.45;margin:4px 3px 12px"></p>
     <div class="row"><label for="voiceVolume">Lautstärke der Ansagen</label><input id="voiceVolume" type="range" min="0" max="1" step="0.05" value="1" oninput="setVoiceVolume(this.value)" style="flex:1;accent-color:#7456a7"><span id="voiceVolumeValue" class="value">100%</span></div>
     <p style="color:#8e7d9f;font-size:14px;line-height:1.45;margin:12px 3px 3px">Die Stimme der Atemansagen hat eine eigene Lautstärkeeinstellung. Die Web-App senkt die Musiklautstärke nicht aktiv. Auf dem iPhone können iOS oder die Musik-App dennoch eine systemseitige Absenkung vornehmen, die eine Web-App nicht zuverlässig verhindern kann.</p>
   </div>
@@ -293,10 +295,10 @@ html,body{overscroll-behavior:none}
 
 <aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Training beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Training beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
 <script>
-const APP_VERSION='v62 · 10.10.2026';
+const APP_VERSION='v63 · 10.10.2026';
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,x)=>{try{localStorage.setItem(k,x)}catch(e){}}};
 const P=[['10er Serie','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',5,10,5,10,15],['11er Serie','Ein ruhiger Vier-Phasen-Rhythmus.',5,11,5,11,15],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
-let audioMode=(store.get('doogie_audio_mode')==='voice')?'voice':'tones',actx=null;
+let audioMode=(['tones','intro'].includes(store.get('doogie_audio_mode')))?store.get('doogie_audio_mode'):'voice',mixMusic=store.get('doogie_mix_music')==='1',actx=null,sessionSet=false;
 let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true,wakeLock=null,sid=0;
 const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
 function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile'){loadAudioSettings();renderMode();diagShow([])}}
@@ -438,23 +440,25 @@ function orbPhase(sec){
   o.style.transition='transform '+sec+'s ease-in-out';
   o.style.transform=k==='INHALE'?'scale(1.14)':'scale(.86)';
 }
-function useVoice(){return audioMode==='voice'}
+function useVoice(){return audioMode!=='tones'} // true = Sprache (voll oder nur Anfang/Ende)
 function renderMode(){
-  const b=$('modeBtn'),n=$('modeNote');
-  if(b)b.textContent=useVoice()?'Sprache':'Töne';
-  if(n)n.textContent=useVoice()?'Sprache: gesprochene Ansagen. iOS pausiert dabei oft die Musik (Spotify o. Ä.).':'Töne: sanfte Klänge für Einatmen, Halten und Ausatmen. Die Musik läuft weiter. Der seitliche Ton-Schalter muss auf Ton stehen.';
+  const b=$('modeBtn'),n=$('modeNote'),m=$('mixBtn'),mn=$('mixNote');
+  if(b)b.textContent=audioMode==='voice'?'Sprache':audioMode==='intro'?'Nur Anfang & Ende':'Töne';
+  if(n)n.textContent=audioMode==='voice'?'Sprache: Begrüßung, Spruch, Ansage jeder Phase und Abschluss gesprochen. iOS kann dabei die Musik pausieren.':audioMode==='intro'?'Gesprochen werden nur Begrüßung, Spruch und Abschluss. Während der Übung ist es still (Kreis und Zähler zeigen die Phase). Die Musik wird nur am Anfang und Ende unterbrochen.':'Töne statt Sprache: steigender, gleichbleibender und fallender Ton. Der seitliche Ton-Schalter muss auf Ton stehen.';
+  if(m)m.textContent=mixMusic?'An':'Aus';
+  if(mn)mn.textContent='Experimentell: versucht, die Musik beim Sprechen weiterlaufen zu lassen. Wird danach nichts mehr gesprochen, wieder ausschalten.';
 }
-function toggleAudioMode(){audioMode=useVoice()?'tones':'voice';store.set('doogie_audio_mode',audioMode);renderMode();diagShow([])}
+function toggleAudioMode(){audioMode=audioMode==='voice'?'intro':audioMode==='intro'?'tones':'voice';store.set('doogie_audio_mode',audioMode);renderMode();diagShow([])}
+function toggleMix(){mixMusic=!mixMusic;store.set('doogie_mix_music',mixMusic?'1':'0');renderMode();diagShow([])}
+function setSession(t){try{if(navigator.audioSession){navigator.audioSession.type=t;sessionSet=(t!=='auto')}}catch(e){}}
 function audioOn(){ // nur im Tap-Handler aufrufen
-  if(useVoice())return;
-  try{if(navigator.audioSession)navigator.audioSession.type='ambient'}catch(e){}
+  if(useVoice()){if(mixMusic)setSession('ambient');return}
+  setSession('ambient');
   try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;if(!actx||actx.state==='closed')actx=new C();if(actx.state==='suspended')actx.resume()}catch(e){}
 }
 function audioOff(){
-  if(!actx)return;
-  try{if(actx.state!=='closed')actx.close()}catch(e){}
-  actx=null;
-  try{if(navigator.audioSession)navigator.audioSession.type='auto'}catch(e){}
+  if(actx){try{if(actx.state!=='closed')actx.close()}catch(e){}actx=null}
+  if(sessionSet)setSession('auto');
 }
 function beep(f0,f1,d,delay){
   const c=actx;if(!c||voiceVolume<=0)return;
@@ -468,14 +472,14 @@ function beep(f0,f1,d,delay){
 }
 function tone(kind){if(kind==='INHALE')beep(392,587,.9);else if(kind==='EXHALE')beep(587,392,.9);else beep(466,466,.5)}
 function doneTone(){beep(523,523,.7,0);beep(659,659,.7,.45);beep(784,784,1.1,.9)}
-function announce(kind){if(useVoice()){chime();speak(words[kind])}else tone(kind)}
+function announce(kind){if(audioMode==='voice'){chime();speak(words[kind])}else if(audioMode==='tones')tone(kind)}
 function diagBase(){
   const sp='speechSynthesis' in window;let vs=[];try{vs=sp?speechSynthesis.getVoices():[]}catch(e){}
   const de=vs.filter(x=>x.lang&&x.lang.toLowerCase().startsWith('de'));
   const vo=cachedVoice||pickGermanVoice();
   return ['Version '+APP_VERSION,
     'Modus: '+(navigator.standalone?'Home-Bildschirm-App':'Safari-Tab'),
-    'Ansagen: '+(useVoice()?'Sprache':'Töne'),
+    'Ansagen: '+(audioMode==='voice'?'Sprache':audioMode==='intro'?'Nur Anfang & Ende':'Töne')+' | Musik mischen: '+(mixMusic?'an':'aus'),
     'Sprachausgabe: '+(sp?'vorhanden':'fehlt'),
     'Stimmen gesamt / deutsch: '+vs.length+' / '+de.length,
     'Gewählte Stimme: '+(vo?vo.name:'keine (Systemstandard)'),
@@ -572,7 +576,7 @@ function finish(){
   clearInterval(t);releaseScreenAwake();s=null;
   const id=++sid;
   show('done');$('dg').textContent='Ich wünsche dir einen entspannten Tag.';
-  if(useVoice())speakEnglish('Well done, Doogie.',()=>setTimeout(()=>{if(id===sid)speak('Ich wünsche dir einen entspannten Tag.')},2500));
+  if(useVoice())speakEnglish('Well done, Doogie.',()=>setTimeout(()=>{if(id===sid)speak('Ich wünsche dir einen entspannten Tag.',()=>{if(id===sid)audioOff()})},2500));
   else{doneTone();setTimeout(()=>{if(id===sid)audioOff()},3000)}
 }
 function toast(text){let e=$('toast');e.textContent=text;e.classList.add('on');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('on'),1800)}
