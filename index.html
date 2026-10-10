@@ -277,6 +277,11 @@ html,body{overscroll-behavior:none}
     <div style="height:9px"></div>
     <button class="primary" onclick="show('history')">Verlauf</button>
   </div>
+  <div class="panel" style="margin-top:12px"><div class="sectionTitle" style="color:#8069a0"><span>Eigene Stimme</span></div>
+    <p style="color:#6f5f84;font-size:13px;line-height:1.45;margin:0 3px 10px">Sprich Einatmen, Halten und Ausatmen selbst ein, jeweils ein Wort, ohne Musik im Hintergrund. Im Modus „Eigene Stimme“ werden die Aufnahmen abgespielt, und die Musik läuft weiter. Begrüßung und Abschluss sind optional. Alternativ wählst du mit „Datei“ fertige Audiodateien (m4a, mp3 oder wav, höchstens 1,5 MB) aus der Dateien-App. Tippe zum Beenden einer Aufnahme auf „Stopp“.</p>
+    <input id="cueFile" type="file" accept="audio/*" style="display:none" onchange="importCue(this)">
+    <div id="cues"></div>
+  </div>
   <div class="panel" style="margin-top:12px"><div class="sectionTitle" style="color:#8069a0"><span>Diagnose</span></div>
     <button class="primary" onclick="testSpeech()">Sprache testen</button>
     <div style="height:9px"></div>
@@ -295,13 +300,13 @@ html,body{overscroll-behavior:none}
 
 <aside id="modal" class="modal"><div class="sheet"><div class="handle"></div><h3 class="serif">Training beenden?</h3><p style="color:#8d7ca0">Dein aktueller Trainingsfortschritt wird beendet.</p><button class="end" onclick="quit()">Training beenden</button><button class="cancel" onclick="mod(0)">Weiter atmen</button></div></aside><div id="toast" class="toast"></div>
 <script>
-const APP_VERSION='v63 · 10.10.2026';
+const APP_VERSION='v65 · 10.10.2026';
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,x)=>{try{localStorage.setItem(k,x)}catch(e){}}};
 const P=[['10er Serie','Ein gleichmäßiger Vier-Phasen-Rhythmus für Fokus.',5,10,5,10,15],['11er Serie','Ein ruhiger Vier-Phasen-Rhythmus.',5,11,5,11,15],['Nadi Shodhana','Ein sanfter, ausgeglichener Rhythmus.',4,4,6,2,3],['Kapalabhati','Eine kurze, aktivierende Atemübung.',2,0,2,0,3]];
-let audioMode=(['tones','intro'].includes(store.get('doogie_audio_mode')))?store.get('doogie_audio_mode'):'voice',mixMusic=store.get('doogie_mix_music')==='1',actx=null,sessionSet=false;
+let audioMode=(['tones','intro','own'].includes(store.get('doogie_audio_mode')))?store.get('doogie_audio_mode'):'voice',mixMusic=store.get('doogie_mix_music')==='1',actx=null,sessionSet=false;
 let v=[4,4,6,2],customDuration=10,s,t,firstExercisePending=true,wakeLock=null,sid=0;
 const $=x=>document.getElementById(x),words={INHALE:'Einatmen',HOLD:'Halten',EXHALE:'Ausatmen'};
-function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile'){loadAudioSettings();renderMode();diagShow([])}}
+function show(x){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===x));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.screen===x));if(x==='home')renderHome();if(x==='custom')renderPresets();if(x==='history')renderHistory();if(x==='profile'){loadAudioSettings();renderMode();renderCues();diagShow([])}}
 function greeting(){let h=new Date().getHours();return h<5?'Gute Nacht':h<10?'Guten Morgen':h<12?'Guten Vormittag':h<14?'Guten Mittag':h<18?'Guten Nachmittag':h<22?'Guten Abend':'Gute Nacht'}
 const DAILY_QUOTES=[
 'Was wirklich wichtig ist, braucht keine Eile.',
@@ -440,15 +445,15 @@ function orbPhase(sec){
   o.style.transition='transform '+sec+'s ease-in-out';
   o.style.transform=k==='INHALE'?'scale(1.14)':'scale(.86)';
 }
-function useVoice(){return audioMode!=='tones'} // true = Sprache (voll oder nur Anfang/Ende)
+function useVoice(){return audioMode==='voice'||audioMode==='intro'} // true = Systemsprache (voll oder nur Anfang/Ende)
 function renderMode(){
   const b=$('modeBtn'),n=$('modeNote'),m=$('mixBtn'),mn=$('mixNote');
-  if(b)b.textContent=audioMode==='voice'?'Sprache':audioMode==='intro'?'Nur Anfang & Ende':'Töne';
-  if(n)n.textContent=audioMode==='voice'?'Sprache: Begrüßung, Spruch, Ansage jeder Phase und Abschluss gesprochen. iOS kann dabei die Musik pausieren.':audioMode==='intro'?'Gesprochen werden nur Begrüßung, Spruch und Abschluss. Während der Übung ist es still (Kreis und Zähler zeigen die Phase). Die Musik wird nur am Anfang und Ende unterbrochen.':'Töne statt Sprache: steigender, gleichbleibender und fallender Ton. Der seitliche Ton-Schalter muss auf Ton stehen.';
+  if(b)b.textContent=audioMode==='voice'?'Sprache':audioMode==='intro'?'Nur Anfang & Ende':audioMode==='own'?'Eigene Stimme':'Töne';
+  if(n)n.textContent=audioMode==='voice'?'Sprache: Begrüßung, Spruch, Ansage jeder Phase und Abschluss gesprochen. iOS kann dabei die Musik pausieren.':audioMode==='intro'?'Gesprochen werden nur Begrüßung, Spruch und Abschluss. Während der Übung ist es still (Kreis und Zähler zeigen die Phase). Die Musik wird nur am Anfang und Ende unterbrochen.':audioMode==='own'?'Deine eigenen Aufnahmen (Bereich „Eigene Stimme“ unten) werden abgespielt, ohne die Musik zu unterbrechen. Fehlt eine Aufnahme, kommt stattdessen ein Ton. Der seitliche Ton-Schalter muss auf Ton stehen.':'Töne statt Sprache: steigender, gleichbleibender und fallender Ton. Der seitliche Ton-Schalter muss auf Ton stehen.';
   if(m)m.textContent=mixMusic?'An':'Aus';
   if(mn)mn.textContent='Experimentell: versucht, die Musik beim Sprechen weiterlaufen zu lassen. Wird danach nichts mehr gesprochen, wieder ausschalten.';
 }
-function toggleAudioMode(){audioMode=audioMode==='voice'?'intro':audioMode==='intro'?'tones':'voice';store.set('doogie_audio_mode',audioMode);renderMode();diagShow([])}
+function toggleAudioMode(){audioMode=audioMode==='voice'?'intro':audioMode==='intro'?'own':audioMode==='own'?'tones':'voice';store.set('doogie_audio_mode',audioMode);renderMode();diagShow([])}
 function toggleMix(){mixMusic=!mixMusic;store.set('doogie_mix_music',mixMusic?'1':'0');renderMode();diagShow([])}
 function setSession(t){try{if(navigator.audioSession){navigator.audioSession.type=t;sessionSet=(t!=='auto')}}catch(e){}}
 function audioOn(){ // nur im Tap-Handler aufrufen
@@ -459,6 +464,73 @@ function audioOn(){ // nur im Tap-Handler aufrufen
 function audioOff(){
   if(actx){try{if(actx.state!=='closed')actx.close()}catch(e){}actx=null}
   if(sessionSet)setSession('auto');
+}
+const CUES=[['INHALE','Einatmen'],['HOLD','Halten'],['EXHALE','Ausatmen'],['WELCOME','Begrüßung'],['DONE','Abschluss']];
+let cueBuf={},rec=null;
+function cueKey(k){return 'doogie_cue_'+k}
+function hasCue(k){return !!store.get(cueKey(k))}
+function b64ToBuf(d){const b=atob(d.slice(d.indexOf(',')+1)),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a.buffer}
+function decode(c,ab){return new Promise((res,rej)=>{try{const p=c.decodeAudioData(ab,res,rej);if(p&&p.catch)p.catch(rej)}catch(e){rej(e)}})}
+async function loadCues(){
+  cueBuf={};if(!actx)return;
+  for(const [k] of CUES){const d=store.get(cueKey(k));if(!d)continue;try{cueBuf[k]=await decode(actx,b64ToBuf(d))}catch(e){}}
+}
+function cuePlay(kind){
+  const b=cueBuf[kind];
+  if(!b){if(kind==='DONE')doneTone();else if(kind!=='WELCOME')tone(kind);return 0}
+  try{const c=actx;if(!c)return 0;if(c.state==='suspended')c.resume();const src=c.createBufferSource(),g=c.createGain();g.gain.value=voiceVolume;src.buffer=b;src.connect(g);g.connect(c.destination);src.start();return b.duration||0}catch(e){return 0}
+}
+async function recCue(k){
+  if(rec){if(rec.k===k)try{rec.mr.stop()}catch(e){}return}
+  if(!navigator.mediaDevices||!window.MediaRecorder){toast('Aufnahme wird hier nicht unterstützt');return}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const mr=new MediaRecorder(stream),chunks=[];
+    rec={k,mr,tm:null};
+    mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+    mr.onstop=()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      if(rec)clearTimeout(rec.tm);
+      const fr=new FileReader();
+      fr.onload=()=>{store.set(cueKey(k),fr.result);rec=null;renderCues();toast(hasCue(k)?'Aufnahme gespeichert':'Speichern fehlgeschlagen')};
+      fr.readAsDataURL(new Blob(chunks,{type:mr.mimeType||'audio/mp4'}));
+    };
+    mr.start();
+    rec.tm=setTimeout(()=>{try{mr.stop()}catch(e){}},8000);
+    renderCues();
+  }catch(e){rec=null;renderCues();toast('Mikrofon nicht erlaubt')}
+}
+async function previewCue(k){
+  const d=store.get(cueKey(k));if(!d)return;
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;const c=new C();
+    if(c.state==='suspended')await c.resume();
+    const b=await decode(c,b64ToBuf(d));
+    const src=c.createBufferSource(),g=c.createGain();g.gain.value=voiceVolume;src.buffer=b;src.connect(g);g.connect(c.destination);
+    src.onended=()=>{try{c.close()}catch(e){}};src.start();
+  }catch(e){toast('Wiedergabe nicht möglich')}
+}
+let cuePickKey=null;
+function pickCue(k){cuePickKey=k;const f=$('cueFile');f.value='';f.click()}
+function importCue(inp){
+  const f=inp.files&&inp.files[0],k=cuePickKey;if(!f||!k)return;
+  if(f.size>1500000){toast('Datei zu groß (max. 1,5 MB)');return}
+  const fr=new FileReader();
+  fr.onload=async()=>{
+    try{
+      const C=window.AudioContext||window.webkitAudioContext;const c=new C();
+      try{await decode(c,b64ToBuf(fr.result))}finally{try{c.close()}catch(e){}}
+      store.set(cueKey(k),fr.result);
+      toast(hasCue(k)?'Datei übernommen':'Speichern fehlgeschlagen (Speicher voll?)');
+    }catch(e){toast('Dieses Dateiformat kann nicht gelesen werden')}
+    renderCues();
+  };
+  fr.readAsDataURL(f);
+}
+function delCue(k){store.set(cueKey(k),'');renderCues()}
+function renderCues(){
+  const e=$('cues');if(!e)return;
+  e.innerHTML=CUES.map(([k,n])=>`<div class="row" style="flex-wrap:wrap"><label>${n}</label><span class="value" style="width:24px">${hasCue(k)?'✓':'–'}</span><button class="step" style="width:auto;padding:0 12px;font-size:14px" onclick="recCue('${k}')">${rec&&rec.k===k?'■ Stopp':'● Aufnehmen'}</button><button class="step" style="width:auto;padding:0 12px;font-size:14px" onclick="pickCue('${k}')">Datei</button>${hasCue(k)?`<button class="step" onclick="previewCue('${k}')" aria-label="Anhören">▶</button><button class="step" onclick="delCue('${k}')" aria-label="Löschen">✕</button>`:''}</div>`).join('');
 }
 function beep(f0,f1,d,delay){
   const c=actx;if(!c||voiceVolume<=0)return;
@@ -472,14 +544,14 @@ function beep(f0,f1,d,delay){
 }
 function tone(kind){if(kind==='INHALE')beep(392,587,.9);else if(kind==='EXHALE')beep(587,392,.9);else beep(466,466,.5)}
 function doneTone(){beep(523,523,.7,0);beep(659,659,.7,.45);beep(784,784,1.1,.9)}
-function announce(kind){if(audioMode==='voice'){chime();speak(words[kind])}else if(audioMode==='tones')tone(kind)}
+function announce(kind){if(audioMode==='voice'){chime();speak(words[kind])}else if(audioMode==='own')cuePlay(kind);else if(audioMode==='tones')tone(kind)}
 function diagBase(){
   const sp='speechSynthesis' in window;let vs=[];try{vs=sp?speechSynthesis.getVoices():[]}catch(e){}
   const de=vs.filter(x=>x.lang&&x.lang.toLowerCase().startsWith('de'));
   const vo=cachedVoice||pickGermanVoice();
   return ['Version '+APP_VERSION,
     'Modus: '+(navigator.standalone?'Home-Bildschirm-App':'Safari-Tab'),
-    'Ansagen: '+(audioMode==='voice'?'Sprache':audioMode==='intro'?'Nur Anfang & Ende':'Töne')+' | Musik mischen: '+(mixMusic?'an':'aus'),
+    'Ansagen: '+(audioMode==='voice'?'Sprache':audioMode==='intro'?'Nur Anfang & Ende':audioMode==='own'?'Eigene Stimme':'Töne')+' | Musik mischen: '+(mixMusic?'an':'aus'),
     'Sprachausgabe: '+(sp?'vorhanden':'fehlt'),
     'Stimmen gesamt / deutsch: '+vs.length+' / '+de.length,
     'Gewählte Stimme: '+(vo?vo.name:'keine (Systemstandard)'),
@@ -527,7 +599,9 @@ function start(p){
     announce(q[0][0]);orbPhase(q[0][1]);
     t=setInterval(tick,1000);
   };
-  if(useVoice())welcome(begin,id);else setTimeout(begin,1500);
+  if(useVoice())welcome(begin,id);
+  else if(audioMode==='own'){loadCues().then(()=>{if(id!==sid)return;const d=cuePlay('WELCOME');setTimeout(begin,Math.round(d*1000)+1500)})}
+  else setTimeout(begin,1500);
   setTimeout(begin,30000); // Sicherheitsnetz, falls die Sprachausgabe nie 'onend' meldet
 }
 function tick(){
@@ -577,10 +651,10 @@ function finish(){
   const id=++sid;
   show('done');$('dg').textContent='Ich wünsche dir einen entspannten Tag.';
   if(useVoice())speakEnglish('Well done, Doogie.',()=>setTimeout(()=>{if(id===sid)speak('Ich wünsche dir einen entspannten Tag.',()=>{if(id===sid)audioOff()})},2500));
-  else{doneTone();setTimeout(()=>{if(id===sid)audioOff()},3000)}
+  else{let d=0;if(audioMode==='own')d=cuePlay('DONE');else doneTone();setTimeout(()=>{if(id===sid)audioOff()},3000+Math.round((d||0)*1000))}
 }
 function toast(text){let e=$('toast');e.textContent=text;e.classList.add('on');clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove('on'),1800)}
-recordAppDay();renderHome();renderPresets();renderHistory();loadAudioSettings();renderMode();
+recordAppDay();renderHome();renderPresets();renderHistory();loadAudioSettings();renderMode();renderCues();
 </script></div>
 <script>
 if ('serviceWorker' in navigator) {
